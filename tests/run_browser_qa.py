@@ -43,7 +43,7 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
             width = app.locator("body").evaluate("(e) => e.scrollWidth")
             inner = app.locator("body").evaluate("(e) => e.clientWidth")
             assert width <= inner + 2, f"Horizontal overflow: {width} > {inner}"
-            page.screenshot(path=str(ROOT / f"tests/practice-{label}.png"), full_page=True)
+            app.locator("body").screenshot(path=str(ROOT / f"tests/practice-{label}.png"))
             page.close()
         browser.close()
     server.shutdown()
