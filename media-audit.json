@@ -1,0 +1,13 @@
+{
+  "version": "0.5",
+  "note": "No third-party video/photo assets copied or hosted. Lesson pages link to publisher topic libraries. Existing diagrams are generated in code.",
+  "topics": [
+    {"category":"Fundamentals","topic":"Grip, setup and alignment","status":"publisher_topic_link_only","verified_individual_video":false,"embed_authorized":false},
+    {"category":"Driver","topic":"Driver setup and accuracy","status":"publisher_topic_link_only","verified_individual_video":false,"embed_authorized":false},
+    {"category":"Ball Striking","topic":"Iron contact and turf interaction","status":"publisher_topic_link_only","verified_individual_video":false,"embed_authorized":false},
+    {"category":"Short Game","topic":"Chipping and pitching","status":"publisher_topic_link_only","verified_individual_video":false,"embed_authorized":false},
+    {"category":"Putting","topic":"Putting fundamentals","status":"publisher_topic_link_only","verified_individual_video":false,"embed_authorized":false},
+    {"category":"Course Strategy","topic":"Course strategy","status":"publisher_topic_link_only","verified_individual_video":false,"embed_authorized":false},
+    {"category":"Rules & Etiquette","topic":"Rules of Golf","status":"publisher_topic_link_only","verified_individual_video":false,"embed_authorized":false}
+  ]
+}
