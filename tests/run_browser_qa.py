@@ -82,6 +82,9 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                 assert not accessibility["unlabeledButtons"], accessibility
                 assert not accessibility["brokenLabels"], accessibility
                 assert not accessibility["diagramLabels"], accessibility
+                # Confirm the original practice-history storage key remains unchanged.
+                storage_key = app.locator("body").evaluate("() => key")
+                assert storage_key == "thelab-practice-v1", storage_key
                 width = app.locator("body").evaluate("(e) => e.scrollWidth")
                 inner = app.locator("body").evaluate("(e) => e.clientWidth")
                 assert width <= inner + 2, f"Horizontal overflow: {width} > {inner}"
