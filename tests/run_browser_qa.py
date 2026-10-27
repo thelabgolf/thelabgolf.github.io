@@ -38,7 +38,7 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                 assert "ALL BROWSER CHECKS PASSED" in result and "FAIL " not in result, result
                 assert not errors, errors
                 app = page.frame_locator("#app")
-                assert app.locator("#drills article").count() == 70
+                assert app.locator("#drills article").count() == 90
                 width = app.locator("body").evaluate("(e) => e.scrollWidth")
                 inner = app.locator("body").evaluate("(e) => e.clientWidth")
                 assert width <= inner + 2, f"Horizontal overflow: {width} > {inner}"
