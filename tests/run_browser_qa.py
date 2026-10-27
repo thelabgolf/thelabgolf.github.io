@@ -46,6 +46,22 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                 }""")
                 assert inventory["count"] == 260 and inventory["unique"] == 260, inventory
                 assert inventory["metadata"] == 260 and not inventory["missing"], inventory
+                accessibility = app.locator("body").evaluate("""() => ({
+                    lang: document.documentElement.lang,
+                    unlabeledButtons: [...document.querySelectorAll('button')].filter(
+                        b => !((b.innerText || '').trim() || b.getAttribute('aria-label'))
+                    ).length,
+                    brokenLabels: [...document.querySelectorAll('label[for]')].filter(
+                        label => !document.getElementById(label.htmlFor)
+                    ).map(label => label.htmlFor),
+                    diagramLabels: [...document.querySelectorAll('#diagram svg[role="img"]')].filter(
+                        svg => !svg.getAttribute('aria-label')
+                    ).length
+                })""")
+                assert accessibility["lang"] == "en", accessibility
+                assert not accessibility["unlabeledButtons"], accessibility
+                assert not accessibility["brokenLabels"], accessibility
+                assert not accessibility["diagramLabels"], accessibility
                 width = app.locator("body").evaluate("(e) => e.scrollWidth")
                 inner = app.locator("body").evaluate("(e) => e.clientWidth")
                 assert width <= inner + 2, f"Horizontal overflow: {width} > {inner}"
