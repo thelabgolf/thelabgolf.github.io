@@ -46,6 +46,25 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                 }""")
                 assert inventory["count"] == 260 and inventory["unique"] == 260, inventory
                 assert inventory["metadata"] == 260 and not inventory["missing"], inventory
+                coaching = app.locator("body").evaluate("""() => [
+                    ['mental', mentalCoaching, 20],
+                    ['specialty', specialtyCoaching, 20],
+                    ['bunker', bunkerCoaching, 20],
+                    ['putt', puttCoaching, 33]
+                ].map(([prefix, items, expected]) => {
+                    const subset = drills.filter(d => d.id.startsWith(prefix + '-expanded-'));
+                    return {prefix, expected, count:subset.length,
+                        uniqueGoals:new Set(subset.map(d => d.goal)).size,
+                        uniqueTips:new Set(items.map(c => c.tip)).size,
+                        uniqueMistakes:new Set(items.map(c => c.mistake)).size,
+                        uniqueCorrections:new Set(items.map(c => c.correction)).size};
+                })""")
+                for group in coaching:
+                    assert group["count"] == group["expected"], group
+                    assert group["uniqueGoals"] == group["expected"], group
+                    assert group["uniqueTips"] == group["expected"], group
+                    assert group["uniqueMistakes"] == group["expected"], group
+                    assert group["uniqueCorrections"] == group["expected"], group
                 accessibility = app.locator("body").evaluate("""() => ({
                     lang: document.documentElement.lang,
                     unlabeledButtons: [...document.querySelectorAll('button')].filter(
