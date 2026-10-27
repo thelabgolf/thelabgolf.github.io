@@ -39,11 +39,23 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                 assert not errors, errors
                 app = page.frame_locator("#app")
                 assert app.locator("#drills article").count() == 260
+                inventory = app.locator("body").evaluate("""() => {
+                    const coaches = [...driverCoaching,...ironCoaching,...woodCoaching,...chipCoaching,...pitchCoaching,...puttCoaching,...bunkerCoaching,...strategyCoaching,...mentalCoaching,...specialtyCoaching];
+                    return {count:drills.length,unique:new Set(drills.map(d=>d.id)).size,
+                        metadata:metadata.length,missing:drills.filter(d=>!diagrams[d.id]||!coaches.some(x=>x.id===d.id)||!d.safety||!Array.isArray(d.steps)||d.steps.length<3||!Number.isInteger(d.attempts)||d.attempts<1).map(d=>d.id)};
+                }""")
+                assert inventory["count"] == 260 and inventory["unique"] == 260, inventory
+                assert inventory["metadata"] == 260 and not inventory["missing"], inventory
                 width = app.locator("body").evaluate("(e) => e.scrollWidth")
                 inner = app.locator("body").evaluate("(e) => e.clientWidth")
                 assert width <= inner + 2, f"Horizontal overflow: {width} > {inner}"
             finally:
                 page.screenshot(path=str(ROOT / f"tests/practice-{label}.png"), full_page=True)
+                try:
+                    page.frame_locator("#app").locator("body").screenshot(
+                        path=str(ROOT / f"tests/practice-app-{label}.png"))
+                except Exception as capture_error:
+                    print(f"Unable to capture app screenshot ({label}): {capture_error}")
             page.close()
         browser.close()
     server.shutdown()
