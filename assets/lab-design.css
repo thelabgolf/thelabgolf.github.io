@@ -26,3 +26,11 @@ p,li{overflow-wrap:break-word}
  .option,.lesson-btn{min-height:46px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Visual refresh: consistent depth, cards and mobile tap targets */
+:root{--lab-radius:16px;--lab-shadow:0 14px 38px #0005}
+.lab-header{background:linear-gradient(110deg,#101d15,#15271a)!important;border-bottom:1px solid #456146!important}
+.panel,.card,.item{border-radius:var(--lab-radius);box-shadow:var(--lab-shadow)}
+button,.btn,.action{transition:filter .16s ease,transform .16s ease}
+@media(hover:hover){button:hover,.btn:hover,.action:hover{filter:brightness(1.1);transform:translateY(-1px)}}
+@media(max-width:760px){.lab-header{padding-bottom:12px!important}.lab-nav a{box-shadow:inset 0 1px #ffffff12;letter-spacing:.01em}.panel,.card,.item{box-shadow:0 8px 24px #0004}}
