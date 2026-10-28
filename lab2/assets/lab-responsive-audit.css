@@ -1,0 +1,27 @@
+/* The Lab: shared responsive safeguards for Academy, Practice, Programs and Account. */
+html{scroll-padding-top:76px}
+*,*::before,*::after{box-sizing:border-box}
+body{max-width:100%;overflow-x:clip}
+main{min-width:0}
+main img,main video,main iframe{max-width:100%;height:auto}
+main :where(h1,h2,h3,p){overflow-wrap:break-word}
+:where(button,a,input,select,textarea):focus-visible{outline:3px solid #c7f43b;outline-offset:3px}
+@media(max-width:700px){
+ main{width:100%;max-width:100%;padding-left:16px!important;padding-right:16px!important;padding-bottom:calc(132px + env(safe-area-inset-bottom))!important}
+ main :where(input,select,textarea){max-width:100%;font-size:16px}
+ main :where(button,[role=button]){min-height:44px}
+ main :where(.grid,.row,.panel,.card,.filters){max-width:100%}
+ main :where(.row,.grid,.filters)>*{min-width:0}
+ .mobile-dock{max-width:calc(100vw - 20px);padding-bottom:env(safe-area-inset-bottom)}
+ .mobile-dock a{min-width:0;text-align:center}
+ .mobile-dock .dock-icon{line-height:1.2}
+ #categories.categories{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;max-width:100%!important;-webkit-overflow-scrolling:touch}
+ #categories.categories>button{flex:0 0 auto!important;max-width:none!important;width:max-content!important;min-width:max-content!important;white-space:nowrap!important}
+}
+@media(max-width:420px){
+ .filters{grid-template-columns:minmax(0,1fr)!important}
+ .filters>div{grid-column:auto!important}
+}
+@media(min-width:701px){
+ main{max-width:1100px}
+}
