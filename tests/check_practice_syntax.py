@@ -35,7 +35,7 @@ JSON.stringify({
  malformedDiagrams: Object.entries(diagrams).filter(([id, svg]) =>
    !svg.startsWith('<svg') || !svg.endsWith('</svg>') ||
    !svg.includes('role="img"') || !svg.includes('aria-label="') ||
-   (svg.match(/<text\\b/g) || []).length !== (svg.match(/<\\/text>/g) || []).length
+   svg.split('<text ').length !== svg.split('</text>').length
  ).map(([id]) => id),
  missing: drills.filter(d => !diagrams[d.id] || !d.steps || !d.safety).map(d => d.id),
  coaches: [...driverCoaching,...ironCoaching,...woodCoaching,...chipCoaching,...pitchCoaching,...puttCoaching,...bunkerCoaching,...strategyCoaching,...mentalCoaching,...specialtyCoaching,...coreCoaching].map(c => c.id),
