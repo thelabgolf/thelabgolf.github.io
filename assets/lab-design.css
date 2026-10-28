@@ -173,3 +173,13 @@ button,.btn,.action{transition:filter .16s ease,transform .16s ease}
  .actions .btn{width:100%!important}
 }
 @media(max-width:375px){.mobile-dock a{font-size:.59rem!important}.mobile-dock .dock-icon{font-size:1.22rem!important}.platform-stat{padding:12px 6px!important}}
+
+
+/* Temporary red theme override */
+:root{--lab-accent:#ff424e!important;--lime:#ff424e!important;--accent:#ff424e!important;--green:#ff424e!important}
+.site-wordmark span,.brand span,.logo em{color:#ff424e!important}
+.mobile-dock a[aria-current="page"]{color:#ff424e!important;background:#431b21!important}
+.primary-button,.btn:not(.ghost):not(.danger),.video-action,.lab-intro a{background:#ff424e!important;color:#fff!important}
+.site-top,.site-header{border-bottom-color:#693039!important}
+.panel,.card,.feature,.stat,.platform-stat{border-color:#623038!important}
+body{background-color:#170b0e!important}
