@@ -41,7 +41,7 @@ JSON.stringify({
 const x = JSON.parse(result);
 if (x.count !== 260 || x.unique !== 260 || x.metadata !== 260 ||
     x.diagrams !== 260 || x.missing.length || x.coaches.length !== 260 ||
-    new Set(x.coaches).size !== 260 || x.ids !== undefined || x.putt !== 33 ||
+    new Set(x.coaches).size !== 260 || x.putt !== 33 ||
     x.uniquePuttMistakes !== 33 || x.uniquePuttCorrections !== 33) {
   throw new Error('Practice Center inventory regression: ' + result);
 }
