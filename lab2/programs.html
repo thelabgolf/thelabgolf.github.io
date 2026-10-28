@@ -99,9 +99,15 @@ else {
   else {
    const remote=Array.isArray(data?.programs)?data.programs:[];
    const local=bridge.get();
+   // Import browser plans only once for the first signed-in owner.
+   // Never merge another member's browser plans into this account.
+   const ownerKey='thelab-programs-owner-v1';
+   const previousOwner=localStorage.getItem(ownerKey);
+   const canImport=!previousOwner||previousOwner===owner;
    const merged=new Map(remote.filter(p=>p&&typeof p.id==='string').map(p=>[p.id,p]));
-   for(const p of local){if(p&&typeof p.id==='string'&&!merged.has(p.id))merged.set(p.id,p)}
+   if(canImport)for(const p of local){if(p&&typeof p.id==='string'&&!merged.has(p.id))merged.set(p.id,p)}
    const combined=[...merged.values()];
+   localStorage.setItem(ownerKey,owner);
    bridge.set(combined);
    try{localStorage.setItem(localKey,JSON.stringify(combined))}catch(e){}
    ready=true;
