@@ -12,3 +12,7 @@
 @media(min-width:600px){.lab2-home{padding-top:36px}.welcome-sub{font-size:16px}.featured-hero,.featured-content{min-height:425px}.featured-content{padding:35px}.feature-button{max-width:290px}.skills-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.training-feature{display:grid;grid-template-columns:44% 56%}.training-image{height:100%;min-height:255px}.training-info{padding:30px}.home-stats{gap:15px}.home-stats>div{padding:22px}.weekly-panel{padding:30px}}
 @media(min-width:900px){.featured-hero,.featured-content{min-height:450px}.featured-content{padding:40px}.feature-overline{margin-top:62px}.skill-tile{min-height:180px;padding:22px}.weekly-panel{display:grid;grid-template-columns:1.2fr 1fr;gap:0 50px}.weekly-copy{grid-column:1;grid-row:1/4}.weekly-panel .days-control{grid-column:2;grid-row:1}.weekly-panel .day-progress,.weekly-panel .weekly-button{grid-column:2}}
 @media(max-width:374px){.lab2-home{padding-left:14px;padding-right:14px}.featured-content{padding:22px 18px}.home-stats>div{padding:14px 9px}.skill-tile{padding:16px 13px}.feature-meta{gap:9px}}
+
+/* Optimized photographic treatments with gradient fallbacks */
+.featured-image{background-image:linear-gradient(120deg,#0e2315a0,#152b1680),url('https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=1200&q=75')}
+.training-image{background-image:linear-gradient(0deg,#10220d44,transparent),url('https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&fit=crop&w=1000&q=75');background-size:cover;background-position:center}
