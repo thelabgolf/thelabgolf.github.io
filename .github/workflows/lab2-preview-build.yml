@@ -1,0 +1,35 @@
+name: Lab 2 preview build
+on:
+  push:
+    branches:
+      - lab-2-mobile-first
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lab2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build production site
+        run: npm run build
+      - name: Verify all entry pages exist
+        run: |
+          test -s dist/index.html
+          test -s dist/performance.html
+          test -s dist/planner.html
+          test -s dist/manifest.webmanifest
+      - name: Upload preview bundle (not published)
+        uses: actions/upload-artifact@v4
+        with:
+          name: the-lab-2-preview
+          path: lab2/dist
+          if-no-files-found: error
