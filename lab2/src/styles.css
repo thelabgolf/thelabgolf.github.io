@@ -62,3 +62,8 @@ body{background:#101214;color:#f4f5f2}
 
 /* Official uploaded brand artwork */
 .brand.brand-image{display:flex;align-items:center;flex-shrink:0;min-width:0}.brand.brand-image img{display:block;width:clamp(112px,13vw,170px);height:auto;max-height:57px;object-fit:contain}.site-footer .footer-brand .footer-logo{display:block;width:clamp(175px,28vw,265px);max-width:100%;height:auto;object-fit:contain}@media(max-width:599px){.brand.brand-image img{width:132px;max-height:54px}.site-footer .footer-brand .footer-logo{width:220px}}
+
+/* Make the supplied black-background logo integrate into the charcoal interface. */
+.brand.brand-image img,.site-footer .footer-brand .footer-logo{mix-blend-mode:screen;filter:contrast(1.08);}
+.brand.brand-image{isolation:isolate;background:transparent}
+.site-footer .footer-brand{isolation:isolate}
