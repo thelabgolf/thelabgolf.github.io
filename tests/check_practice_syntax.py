@@ -49,3 +49,29 @@ with tempfile.TemporaryDirectory() as directory:
     filename = Path(directory) / "practice-inventory.js"
     filename.write_text(scripts[0], encoding="utf-8")
     subprocess.run(["node", "-e", inventory_js, str(filename)], check=True)
+
+inventory_check = r"""
+const fs = require('fs');
+const source = fs.readFileSync(0, 'utf8');
+const start = source.indexOf('const drills=[');
+const end = source.indexOf('const $=');
+if (start < 0 || end < start) throw Error('Practice Center inventory not found');
+const inventory = new Function(source.slice(start, end) + '\\nreturn {drills,metadata,diagrams,puttCoaching,bunkerCoaching,mentalCoaching,specialtyCoaching};')();
+const {drills,metadata,diagrams,puttCoaching,bunkerCoaching,mentalCoaching,specialtyCoaching} = inventory;
+const ids = drills.map(d => d.id);
+if (ids.length !== 260 || new Set(ids).size !== 260) throw Error('Expected 260 unique drill IDs');
+if (metadata.length !== 260) throw Error('Expected 260 metadata records');
+if (ids.some(id => !diagrams[id])) throw Error('Drill missing diagram');
+for (const [name, coaching, expected] of [
+  ['Putting',puttCoaching,33],['Bunker',bunkerCoaching,20],
+  ['Mental',mentalCoaching,20],['Specialty',specialtyCoaching,20]
+]) {
+  if (coaching.length !== expected || new Set(coaching.map(c => c.id)).size !== expected)
+    throw Error(name + ' coaching count or IDs changed');
+}
+if (new Set(puttCoaching.map(c => c.mistake)).size !== 33 ||
+    new Set(puttCoaching.map(c => c.correction)).size !== 33)
+  throw Error('Putting coaching regression');
+console.log('PASS: 260 unique drills, metadata and diagrams; category coaching inventory');
+"""
+subprocess.run(["node", "-e", inventory_check], input=page, text=True, check=True)
