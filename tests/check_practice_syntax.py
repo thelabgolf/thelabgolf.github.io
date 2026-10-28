@@ -32,6 +32,11 @@ const result = vm.runInNewContext(script.slice(0, cut) + `
 JSON.stringify({
  count: drills.length, unique: new Set(drills.map(d => d.id)).size,
  metadata: metadata.length, diagrams: Object.keys(diagrams).length,
+ malformedDiagrams: Object.entries(diagrams).filter(([id, svg]) =>
+   !svg.startsWith('<svg') || !svg.endsWith('</svg>') ||
+   !svg.includes('role="img"') || !svg.includes('aria-label="') ||
+   (svg.match(/<text\\b/g) || []).length !== (svg.match(/<\\/text>/g) || []).length
+ ).map(([id]) => id),
  missing: drills.filter(d => !diagrams[d.id] || !d.steps || !d.safety).map(d => d.id),
  coaches: [...driverCoaching,...ironCoaching,...woodCoaching,...chipCoaching,...pitchCoaching,...puttCoaching,...bunkerCoaching,...strategyCoaching,...mentalCoaching,...specialtyCoaching,...coreCoaching].map(c => c.id),
  putt: puttCoaching.length,
@@ -40,7 +45,7 @@ JSON.stringify({
 })`);
 const x = JSON.parse(result);
 if (x.count !== 260 || x.unique !== 260 || x.metadata !== 260 ||
-    x.diagrams !== 260 || x.missing.length || x.coaches.length !== 260 ||
+    x.diagrams !== 260 || x.missing.length || x.malformedDiagrams.length || x.coaches.length !== 260 ||
     new Set(x.coaches).size !== 260 || x.putt !== 33 ||
     x.uniquePuttMistakes !== 33 || x.uniquePuttCorrections !== 33) {
   throw new Error('Practice Center inventory regression: ' + result);
