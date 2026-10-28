@@ -10,7 +10,7 @@ const originalRender=render;
 render=function(){
  originalRender();
  document.querySelectorAll('#saved article').forEach((article,index)=>{
- const p=programs[index];if(!p)return;
+ const id=article.querySelector('[data-action="delete"]')?.dataset.id;const p=programs.find(x=>x.id===id);if(!p)return;
  const button=document.createElement('button');button.className='btn ghost';button.textContent='Weekly schedule';button.type='button';button.setAttribute('aria-expanded','false');
  const container=document.createElement('div');container.className='week-plan';container.hidden=true;
  button.onclick=()=>{
