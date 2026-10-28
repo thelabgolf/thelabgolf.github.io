@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run the committed Practice Center smoke page in real Chromium."""
 import http.server
+import json
 import pathlib
 import socketserver
 import threading
@@ -85,6 +86,15 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                 # Confirm the original practice-history storage key remains unchanged.
                 storage_key = app.locator("body").evaluate("() => key")
                 assert storage_key == "thelab-practice-v1", storage_key
+                # Test an actual browser download, not just the smoke test's Blob interception.
+                with page.expect_download() as download_info:
+                    app.locator("#export").click()
+                download = download_info.value
+                assert download.suggested_filename == "the-lab-practice-results.json"
+                with open(download.path(), encoding="utf-8") as exported_file:
+                    exported = json.load(exported_file)
+                assert exported["app"] == "The Lab" and exported["type"] == "practice-results"
+                assert isinstance(exported["history"], list), exported
                 width = app.locator("body").evaluate("(e) => e.scrollWidth")
                 inner = app.locator("body").evaluate("(e) => e.clientWidth")
                 assert width <= inner + 2, f"Horizontal overflow: {width} > {inner}"
