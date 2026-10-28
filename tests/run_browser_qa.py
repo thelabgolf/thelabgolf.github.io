@@ -67,6 +67,23 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                     if group["prefix"] != "putt":
                         assert group["uniqueMistakes"] == group["expected"], group
                         assert group["uniqueCorrections"] == group["expected"], group
+                diagrams_audit = app.locator("body").evaluate("""() => {
+                    const ids = [
+                        'specialty-expanded-3', 'specialty-expanded-4',
+                        'specialty-expanded-14', 'bunker-expanded-20',
+                        'putt-expanded-19', 'putt-expanded-25'
+                    ];
+                    return ids.map(id => ({
+                        id,
+                        label: diagrams[id]?.match(/aria-label="([^"]+)"/)?.[1] || '',
+                        text: [...(diagrams[id] || '').matchAll(/<text[^>]*>([^<]+)<\\/text>/g)]
+                            .map(m => m[1]).join(' | ')
+                    }));
+                }""")
+                assert len(diagrams_audit) == 6
+                for diagram in diagrams_audit:
+                    assert len(diagram["label"]) >= 50, diagram
+                    assert "|" in diagram["text"], diagram
                 accessibility = app.locator("body").evaluate("""() => ({
                     lang: document.documentElement.lang,
                     unlabeledButtons: [...document.querySelectorAll('button')].filter(
