@@ -112,4 +112,25 @@ else {
 }
 }
 initializeProgramSync().catch(error=>announce('Account sync unavailable: '+error.message));
+</script><style id="lab-program-drill-overlay-style">
+#lab-drill-overlay[hidden]{display:none!important}
+#lab-drill-overlay{position:fixed;inset:0;z-index:9999;background:#101214;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+#lab-drill-overlay .lab-overlay-bar{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:10px 16px;background:#202527;border-bottom:1px solid #454b4f;color:#f4f5f2}
+#lab-drill-overlay .lab-overlay-bar button{border:1px solid #c7f43b;background:#c7f43b;color:#101214;border-radius:10px;font-weight:800;padding:12px 16px;min-height:44px}
+#lab-drill-overlay iframe{width:100%;flex:1;min-height:0;border:0;background:#101214}
+body.lab-drill-open{overflow:hidden}
+</style><div id="lab-drill-overlay" hidden role="dialog" aria-modal="true" aria-label="Program drill"><div class="lab-overlay-bar"><strong>Program drill</strong><button type="button" id="lab-return-program">← Back to my program</button></div><iframe id="lab-program-drill-frame" title="Practice drill" loading="lazy"></iframe></div><script id="lab-program-drill-overlay-script">
+(function(){
+const overlay=document.getElementById('lab-drill-overlay'),frame=document.getElementById('lab-program-drill-frame'),back=document.getElementById('lab-return-program');
+let opener=null;
+function close(){overlay.hidden=true;frame.removeAttribute('src');document.body.classList.remove('lab-drill-open');if(opener)opener.focus();window.dispatchEvent(new Event('focus')); }
+back.addEventListener('click',close);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)close()});
+document.addEventListener('click',e=>{
+ const link=e.target.closest('a[href]');if(!link||!overlay.hidden)return;
+ const url=new URL(link.href,location.href);
+ if(url.origin!==location.origin||!url.pathname.endsWith('/practice.html')||!url.search)return;
+ e.preventDefault();opener=link;frame.src=url.href;overlay.hidden=false;document.body.classList.add('lab-drill-open');back.focus();
+});
+})();
 </script></body></html>
