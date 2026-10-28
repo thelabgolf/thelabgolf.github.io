@@ -16,3 +16,41 @@
 /* Optimized photographic treatments with gradient fallbacks */
 .featured-image{background-image:linear-gradient(120deg,#0e2315a0,#152b1680),url('https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=1200&q=75')}
 .training-image{background-image:linear-gradient(0deg,#10220d44,transparent),url('https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&fit=crop&w=1000&q=75');background-size:cover;background-position:center}
+
+/* The Lab 2.0 / Charcoal + Lime — mobile-first visual refresh */
+:root{color:#f4f5f2;background:#101214}
+body{background:#101214;color:#f4f5f2}
+.topbar{background:#111315f2;border-bottom-color:#33383b}
+.brand small{color:#aeb5b6}
+.menu-button{background:#262a2d;border-color:#474d50;color:#f1f4ef}
+.mobile-menu{background:#171a1c}.mobile-menu a{background:#292d30}
+.welcome-kicker{color:#c7f43b}.welcome-sub{color:#b7bdbe}
+.welcome-avatar{background:#292d30;border-color:#444a4d}
+.featured-hero{background:#222629;border-color:#3e4447}
+.featured-shade{background:linear-gradient(90deg,#111416ee,#171b1ed0 68%,#1b202390)}
+.feature-tag{background:#24282bdb;border-color:#6b7945;color:#e2f8bc}
+.feature-overline,.feature-description,.feature-meta{color:#dce0dc}
+.feature-button{color:#151815}
+.home-stats>div{background:#24282b;border-color:#3a4043;box-shadow:0 5px 20px #0002}
+.home-stats small,.skill-tile small,.training-info p,.progress-empty p,.weekly-copy p{color:#b6bfc0}
+.skill-tile{background:linear-gradient(145deg,#2b3033,#222629);border-color:#3e4447}
+.skill-icon{background:#c7f43b12}
+.training-feature{background:#24282b;border-color:#3e4447}
+.training-image{background-color:#292d30}
+.progress-panel,.weekly-panel,.planner{background:#24282b;border-color:#3e4447}
+.progress-rings{border-color:#454c50;border-top-color:#c7f43b}
+.progress-period{color:#b6bfc0}
+.days-control button{background:#33383b;border-color:#535b5f;color:#e5f8c5}
+.day-progress span{background:#454b4f}
+.day-progress .active{background:#c7f43b}
+.bottom-nav{background:#1b1e20f7;border-color:#444a4e;box-shadow:0 12px 42px #000b}
+.bottom-nav a{color:#b6bfc0}
+.bottom-nav a[aria-current=page]{color:#c7f43b;background:#343a3c}
+.card-link,.stats>div{background:#262a2d;border-color:#3e4447}
+.card-link p,.stats span{color:#b6bfc0}
+@media(max-width:599px){
+ .top-inner{min-height:68px}
+ .shell{padding-bottom:calc(132px + env(safe-area-inset-bottom))}
+ .bottom-nav{bottom:calc(8px + env(safe-area-inset-bottom));padding-bottom:8px}
+ .skill-tile{min-height:164px}
+}
