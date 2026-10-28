@@ -83,6 +83,7 @@ function queueSave(){
  },400);
 }
 window.addEventListener('lab-programs-changed',queueSave);
+async function initializeProgramSync(){
 if(!supabase){announce('Cloud saving is not configured. Programs remain on this device.');}
 else {
  const {data:{user},error:authError}=await supabase.auth.getUser();
@@ -106,4 +107,6 @@ else {
   }
  }
 }
+}
+initializeProgramSync().catch(error=>announce('Account sync unavailable: '+error.message));
 </script></body></html>
