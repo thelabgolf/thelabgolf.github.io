@@ -41,7 +41,7 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                 app = page.frame_locator("#app")
                 assert app.locator("#drills article").count() == 260
                 inventory = app.locator("body").evaluate("""() => {
-                    const coaches = [...driverCoaching,...ironCoaching,...woodCoaching,...chipCoaching,...pitchCoaching,...puttCoaching,...bunkerCoaching,...strategyCoaching,...mentalCoaching,...specialtyCoaching];
+                    const coaches = [...driverCoaching,...ironCoaching,...woodCoaching,...chipCoaching,...pitchCoaching,...puttCoaching,...bunkerCoaching,...strategyCoaching,...mentalCoaching,...specialtyCoaching,...coreCoaching];
                     return {count:drills.length,unique:new Set(drills.map(d=>d.id)).size,
                         metadata:metadata.length,missing:drills.filter(d=>!diagrams[d.id]||!coaches.some(x=>x.id===d.id)||!d.safety||!Array.isArray(d.steps)||d.steps.length<3||!Number.isInteger(d.attempts)||d.attempts<1).map(d=>d.id)};
                 }""")
