@@ -33,13 +33,15 @@ JSON.stringify({
  count: drills.length, unique: new Set(drills.map(d => d.id)).size,
  metadata: metadata.length, diagrams: Object.keys(diagrams).length,
  missing: drills.filter(d => !diagrams[d.id] || !d.steps || !d.safety).map(d => d.id),
+ coaches: [...driverCoaching,...ironCoaching,...woodCoaching,...chipCoaching,...pitchCoaching,...puttCoaching,...bunkerCoaching,...strategyCoaching,...mentalCoaching,...specialtyCoaching,...coreCoaching].map(c => c.id),
  putt: puttCoaching.length,
  uniquePuttMistakes: new Set(puttCoaching.map(c => c.mistake)).size,
  uniquePuttCorrections: new Set(puttCoaching.map(c => c.correction)).size
 })`);
 const x = JSON.parse(result);
 if (x.count !== 260 || x.unique !== 260 || x.metadata !== 260 ||
-    x.diagrams !== 260 || x.missing.length || x.putt !== 33 ||
+    x.diagrams !== 260 || x.missing.length || x.coaches.length !== 260 ||
+    new Set(x.coaches).size !== 260 || x.ids !== undefined || x.putt !== 33 ||
     x.uniquePuttMistakes !== 33 || x.uniquePuttCorrections !== 33) {
   throw new Error('Practice Center inventory regression: ' + result);
 }
