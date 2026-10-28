@@ -70,3 +70,6 @@ body{background:#101214;color:#f4f5f2}
 
 /* Let screen blending use the actual page background rather than an isolated stacking group. */
 .brand.brand-image,.site-footer .footer-brand{isolation:auto!important}
+
+/* Remove black image background with a color-key filter on the homepage logo. */
+.brand.brand-image img,.site-footer .footer-brand .footer-logo{mix-blend-mode:normal!important;filter:url(#lab-black-key)!important}
