@@ -5,3 +5,14 @@ alter table public.golf_rounds enable row level security;
 alter table public.swing_notes enable row level security;
 create policy "Golfers manage own rounds" on public.golf_rounds for all to authenticated using ((select auth.uid())=user_id) with check ((select auth.uid())=user_id);
 create policy "Golfers manage own swing notes" on public.swing_notes for all to authenticated using ((select auth.uid())=user_id) with check ((select auth.uid())=user_id);
+
+-- One private program snapshot per signed-in golfer.
+create table if not exists public.golfer_programs (
+ user_id uuid primary key references auth.users(id) on delete cascade,
+ programs jsonb not null default '[]'::jsonb,
+ updated_at timestamptz not null default now(),
+ constraint golfer_programs_is_array check (jsonb_typeof(programs) = 'array')
+);
+alter table public.golfer_programs enable row level security;
+create policy "Golfers manage own programs" on public.golfer_programs for all to authenticated
+ using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
