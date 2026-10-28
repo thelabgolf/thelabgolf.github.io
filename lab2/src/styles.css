@@ -67,3 +67,6 @@ body{background:#101214;color:#f4f5f2}
 .brand.brand-image img,.site-footer .footer-brand .footer-logo{mix-blend-mode:screen;filter:contrast(1.08);}
 .brand.brand-image{isolation:isolate;background:transparent}
 .site-footer .footer-brand{isolation:isolate}
+
+/* Let screen blending use the actual page background rather than an isolated stacking group. */
+.brand.brand-image,.site-footer .footer-brand{isolation:auto!important}
