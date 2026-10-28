@@ -210,3 +210,30 @@ body{background:#101214!important;color:#f4f5f2}
 .site-wordmark{font-size:26px!important}
 .site-menu{display:none!important}
 }
+
+/* Mobile-first usability foundation — shared across training pages */
+html{overflow-x:clip;-webkit-text-size-adjust:100%}
+body{min-width:0;overflow-x:clip}
+img,video,iframe,canvas,svg{max-width:100%}
+img,video{height:auto}
+main,section,article,.panel,.card,.grid,.row{min-width:0}
+h1,h2,h3,p,li{overflow-wrap:break-word}
+input,select,textarea,button{max-width:100%;font:inherit}
+input,select,textarea{font-size:max(16px,1rem)}
+:where(button,[role="button"],input[type="submit"],a.action){touch-action:manipulation}
+:where(a,button,input,select,textarea,summary):focus-visible{outline:3px solid #c7f43b;outline-offset:3px}
+@media(max-width:899px){
+  .mobile-dock{box-sizing:border-box;max-width:calc(100vw - 16px)!important;left:8px!important;right:8px!important;bottom:calc(6px + env(safe-area-inset-bottom))!important}
+  .mobile-dock a{min-height:56px!important;min-width:0!important;padding:6px 2px!important;white-space:nowrap}
+  .mobile-dock a span:last-child{font-size:clamp(9px,2.65vw,11px)}
+  main{padding-bottom:calc(140px + env(safe-area-inset-bottom))!important}
+  .panel,.card{max-width:100%}
+}
+@media(max-width:360px){
+  .mobile-dock{padding:6px 2px!important;gap:1px!important}
+  .mobile-dock .dock-icon{font-size:20px!important}
+  .site-top{padding-inline:12px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
