@@ -64,9 +64,8 @@ with socketserver.TCPServer(("127.0.0.1", 0), Handler) as server:
                     assert group["count"] == group["expected"], group
                     assert group["uniqueGoals"] == group["expected"], group
                     assert group["uniqueTips"] == group["expected"], group
-                    if group["prefix"] != "putt":
-                        assert group["uniqueMistakes"] == group["expected"], group
-                        assert group["uniqueCorrections"] == group["expected"], group
+                    assert group["uniqueMistakes"] == group["expected"], group
+                    assert group["uniqueCorrections"] == group["expected"], group
                 diagrams_audit = app.locator("body").evaluate("""() => {
                     const ids = [
                         'specialty-expanded-3', 'specialty-expanded-4',
