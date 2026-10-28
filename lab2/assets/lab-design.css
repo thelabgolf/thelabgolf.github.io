@@ -197,3 +197,16 @@ body{background:#101214!important;color:#f4f5f2}
  main{padding-bottom:calc(125px + env(safe-area-inset-bottom))!important}
 }
 @media(min-width:900px){.mobile-dock{display:none!important}}
+
+/* Final header system: same compact two-line brand as Lab 2 homepage */
+.site-top{position:sticky!important;top:0!important;z-index:100!important;background:#111315f5!important;border-bottom:1px solid #343a3e!important;padding:0 20px!important;backdrop-filter:blur(16px)}
+.site-top-inner{max-width:1120px!important;margin:0 auto!important;min-height:76px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;padding:10px 0!important}
+.site-wordmark{display:block!important;align-self:center!important;flex:0 0 auto!important;width:auto!important;max-width:100%!important;margin:0!important;padding:0!important;color:#f4f5f2!important;font-size:26px!important;font-weight:950!important;letter-spacing:-.065em!important;line-height:1.05!important;text-decoration:none!important;white-space:nowrap!important}
+.site-wordmark span{color:#c7f43b!important}
+.site-wordmark small{display:block!important;flex-basis:auto!important;margin-top:7px!important;color:#aeb6b8!important;font-size:9px!important;font-weight:750!important;letter-spacing:.32em!important;line-height:1.2!important}
+@media(max-width:899px){
+.site-top{padding:0 20px!important}
+.site-top-inner{min-height:76px!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;padding:10px 0!important;gap:0!important}
+.site-wordmark{font-size:26px!important}
+.site-menu{display:none!important}
+}
