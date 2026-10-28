@@ -1,0 +1,9 @@
+import {supabase} from './supabase.js';
+const gate=document.createElement('div');
+gate.id='lab-auth-gate';
+gate.innerHTML='<div class="gate-card"><div class="gate-mark">THE <span>LAB.</span></div><div class="gate-kicker">FREE MEMBER ACCESS</div><h1>Unlock your training.</h1><p>Create a free golfer account or sign in to access lessons, practice drills, programs and personal training tools.</p><a class="gate-cta" href="./account.html">Sign in or create free account</a><a class="gate-back" href="./index.html">← Back to home</a></div>';
+const style=document.createElement('style');
+style.textContent=`#lab-auth-gate{position:fixed;inset:0;z-index:2147483647;background:#101214;color:#f5f6f3;display:grid;place-items:center;padding:24px;font-family:Inter,system-ui,sans-serif;overflow:auto}#lab-auth-gate .gate-card{width:min(100%,520px);padding:clamp(25px,5vw,48px);background:#23282a;border:1px solid #465054;border-radius:25px;box-shadow:0 30px 100px #0009}#lab-auth-gate .gate-mark{font-size:24px;font-weight:900;letter-spacing:-.05em}#lab-auth-gate .gate-mark span{color:#c7f43b}#lab-auth-gate .gate-kicker{margin-top:35px;color:#c7f43b;font-size:12px;font-weight:850;letter-spacing:.18em}#lab-auth-gate h1{font-size:clamp(35px,6vw,56px);letter-spacing:-.055em;line-height:1.05;margin:15px 0}#lab-auth-gate p{color:#b8c2c3;font-size:16px;line-height:1.6}#lab-auth-gate a{display:block;text-align:center;text-decoration:none;font-weight:800}#lab-auth-gate .gate-cta{background:#c7f43b;color:#111510;border-radius:12px;padding:16px;margin-top:28px}#lab-auth-gate .gate-back{color:#c7f43b;margin-top:22px;font-size:14px}`;
+document.head.append(style);
+document.body.append(gate);
+if(supabase){supabase.auth.getUser().then(({data,error})=>{if(!error&&data?.user)gate.remove();}).catch(()=>{});supabase.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session?.user)gate.remove();if(event==='SIGNED_OUT'&&!gate.isConnected)document.body.append(gate);});}
