@@ -26,5 +26,25 @@ function loggedIn(user){
 
 function isRecoveryLink(){const query=new URLSearchParams(location.search),hash=new URLSearchParams(location.hash.slice(1));return query.get('password_reset')==='1'||query.has('code')&&location.pathname.endsWith('/account.html')||query.get('type')==='recovery'||hash.get('type')==='recovery'||query.has('token_hash')&&query.get('type')==='recovery'||sessionStorage.getItem('thelab-recovery-pending')==='1';}
 function showRecovery(){sessionStorage.setItem('thelab-recovery-pending','1');app.innerHTML='<h1>Choose a new password</h1><p>Enter a new password for your Lab account.</p><form id="recover"><label for="new-password">New password</label><input id="new-password" name="password" type="password" minlength="12" autocomplete="new-password" required><label for="confirm-password">Confirm new password</label><input id="confirm-password" name="confirm" type="password" minlength="12" autocomplete="new-password" required><button type="submit">Update password</button></form><p id="message" role="status" aria-live="polite"></p>';document.querySelector('#recover').onsubmit=async e=>{e.preventDefault();const form=new FormData(e.target),password=String(form.get('password')||''),confirm=String(form.get('confirm')||'');if(password!==confirm)return message('Passwords do not match.');const button=e.target.querySelector('button');button.disabled=true;try{const {error}=await supabase.auth.updateUser({password});if(error)throw error;sessionStorage.removeItem('thelab-recovery-pending');history.replaceState(null,'',location.pathname);app.innerHTML='<h1>Password updated</h1><p>Your new password is saved. You can continue to your account.</p><a class="action" href="./account.html">Go to My Golf Lab</a>';}catch(err){message(err.message||'Unable to update password. Please request a new reset link.');}finally{button.disabled=false;}};}
-async function start(){if(!supabase){app.innerHTML='<h1>Accounts are not configured</h1><p>Your existing local training data is still available.</p>';return;}const recovery=isRecoveryLink();if(recovery)showRecovery();const {data,error}=await supabase.auth.getSession();if(error&&!recovery)throw error;if(recovery){if(!data.session?.user)message('Verifying reset link… If this does not finish, request a fresh reset email.');return;}if(data.session?.user)loggedIn(data.session.user);else loggedOut();supabase.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'&&!isRecoveryLink())loggedOut();else if(event==='PASSWORD_RECOVERY')showRecovery();else if(event==='SIGNED_IN'&&isRecoveryLink())showRecovery();else if(event==='SIGNED_IN'&&session?.user&&!isRecoveryLink())loggedIn(session.user);});}
+async function start(){
+ if(!supabase){app.innerHTML='<h1>Accounts are not configured</h1>';return;}
+ const recovery=isRecoveryLink();
+ if(recovery)showRecovery();
+ supabase.auth.onAuthStateChange((event,session)=>{
+  if(event==='PASSWORD_RECOVERY'){showRecovery();return;}
+  if(event==='SIGNED_OUT'){sessionStorage.removeItem('thelab-recovery-pending');loggedOut();return;}
+  if(event==='SIGNED_IN'&&session?.user){
+   if(isRecoveryLink())showRecovery();
+   else loggedIn(session.user);
+  }
+ });
+ const {data,error}=await supabase.auth.getSession();
+ if(error){if(recovery)message('Reset link could not be verified. Request a fresh link.');else loggedOut();return;}
+ if(recovery){
+  if(data.session?.user)showRecovery();
+  else message('Verifying your reset link… If it has expired, request a fresh one.');
+  return;
+ }
+ if(data.session?.user)loggedIn(data.session.user);else loggedOut();
+}
 start().catch(()=>{app.textContent='Accounts are temporarily unavailable. Your local data has not been changed.';});
