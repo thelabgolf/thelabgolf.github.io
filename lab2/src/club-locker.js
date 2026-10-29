@@ -9,12 +9,13 @@ function render(){
  const list=[...clubs],sort=$('sort').value;
  list.sort((a,b)=>sort==='name'?a.club_name.localeCompare(b.club_name):sort==='type'?a.club_type.localeCompare(b.club_type):Number(b.carry_yards||0)-Number(a.carry_yards||0));
  $('count').textContent='('+list.length+')';
- $('locker-club-count').textContent=clubs.length;
+ $('locker-club-count').textContent=clubs.length+' / 14';
+ const bagMessage=$('bag-limit-message');bagMessage.className='bag-limit-message'+(clubs.length>14?' is-over':clubs.length===14?' is-full':'');bagMessage.textContent=clubs.length>14?'Your bag has '+(clubs.length-14)+' more than the 14 clubs permitted during a round.':clubs.length===14?'Your bag is full for a standard round (14 clubs).':(14-clubs.length)+' club '+(14-clubs.length===1?'slot':'slots')+' available for a standard round.';
  $('locker-distance-count').textContent=clubs.filter(c=>c.carry_yards!==null).length;
  const known=clubs.filter(c=>c.carry_yards!==null).sort((a,b)=>Number(b.carry_yards)-Number(a.carry_yards));
  const gaps=known.slice(1).map((c,i)=>Number(known[i].carry_yards)-Number(c.carry_yards));
  $('locker-gap-count').textContent=gaps.length?Math.max(...gaps).toFixed(0)+' yd':'—';
- $('clubs').innerHTML=list.length?list.map(c=>'<article class="club"><div class="eyebrow">'+escapeHTML(c.club_type)+'</div><h3>'+escapeHTML(c.club_name)+'</h3><div class="stats"><span>Carry <strong>'+(c.carry_yards??'—')+'</strong> yd</span><span>Total <strong>'+(c.total_yards??'—')+'</strong> yd</span></div>'+(c.notes?'<p class="muted">'+escapeHTML(c.notes)+'</p>':'')+'<div class="actions"><button class="secondary" data-edit="'+c.id+'">Edit</button><button class="secondary" data-delete="'+c.id+'">Remove</button><a href="'+linkFor(c)+'">Related drills</a></div></article>').join(''):'<div class="panel">No clubs saved yet. Add your first club above.</div>';
+ $('clubs').innerHTML=list.length?list.map(c=>'<article class="club"><div class="eyebrow">'+escapeHTML(c.club_type)+'</div><h3>'+escapeHTML(c.club_name)+'</h3><div class="stats"><span>Carry <strong>'+(c.carry_yards??'—')+'</strong> yd</span><span>Total <strong>'+(c.total_yards??'—')+'</strong> yd</span></div>'+(c.notes?'<p class="muted">'+escapeHTML(c.notes)+'</p>':'')+'<div class="actions"><button class="secondary" data-edit="'+c.id+'">Edit</button><button class="secondary" data-delete="'+c.id+'">Remove</button><a href="'+linkFor(c)+'">Related drills</a></div></article>').join('') :'<div class="club-empty"><div class="club-empty-icon" aria-hidden="true">◈</div><h3>Your locker starts here</h3><p class="muted">Add your clubs to build a personal yardage chart and get smarter club recommendations.</p><a href="#club-form">Add your first club</a></div>';
  const rec=[],dist=clubs.filter(c=>c.carry_yards!==null).sort((a,b)=>Number(b.carry_yards)-Number(a.carry_yards));
  if(!clubs.length)rec.push('Add your clubs to unlock distance-gap and equipment-specific recommendations.');
  else{
@@ -25,7 +26,7 @@ function render(){
   if(!rec.length)rec.push('Your carry gaps look fairly close. Practice hitting consistent distances and record results over time.');
  }
  const chart=[...clubs].filter(c=>c.carry_yards!==null).sort((a,b)=>Number(b.carry_yards)-Number(a.carry_yards));
- $('yardage-rows').innerHTML=chart.length?chart.map((c,i)=>'<tr style="border-top:1px solid #454b4f"><td style="padding:12px 8px">'+escapeHTML(c.club_name)+'</td><td>'+Number(c.carry_yards)+' yd</td><td>'+(c.total_yards===null?'—':Number(c.total_yards)+' yd')+'</td><td>'+(i===0?'—':(Number(chart[i-1].carry_yards)-Number(c.carry_yards)).toFixed(1).replace(/\\.0$/,'')+' yd')+'</td></tr>').join(''):'<tr><td colspan="4" style="padding:14px">Add carry distances to see your yardage chart.</td></tr>';
+ $('yardage-rows').innerHTML=chart.length?chart.map((c,i)=>'<tr style="border-top:1px solid #454b4f"><td style="padding:12px 8px">'+escapeHTML(c.club_name)+'</td><td>'+Number(c.carry_yards)+' yd</td><td>'+(c.total_yards===null?'—':Number(c.total_yards)+' yd')+'</td><td>'+(i===0?'—':'<span class="'+(Number(chart[i-1].carry_yards)-Number(c.carry_yards)>=25?'yardage-gap-alert':'')+'"'+(Number(chart[i-1].carry_yards)-Number(c.carry_yards)>=25?' title="Large carry gap: review for practice"':'')+'>'+(Number(chart[i-1].carry_yards)-Number(c.carry_yards)).toFixed(1).replace(/\\.0$/,'')+' yd</span>')+'</td></tr>').join(''):'<tr><td colspan="4" style="padding:14px">Add carry distances to see your yardage chart.</td></tr>';
  const target=Number($('target-distance').value);
  const candidates=chart.filter(c=>Number.isFinite(Number(c.carry_yards)));
  const nearest=Number.isFinite(target)&&target>0?[...candidates].sort((a,b)=>Math.abs(Number(a.carry_yards)-target)-Math.abs(Number(b.carry_yards)-target)).slice(0,3):[];
@@ -51,6 +52,7 @@ form.addEventListener('submit',async e=>{
  const token=generation,owner=userId;
  const payload={club_name:fields.club_name.value.trim(),club_type:fields.club_type.value,carry_yards:numberOrNull('carry_yards'),total_yards:numberOrNull('total_yards'),notes:fields.notes.value.trim(),updated_at:new Date().toISOString()};
  if(!payload.club_name){status('Enter a club name.');return}
+ if(!editId&&clubs.length>=14){status('Your bag already has 14 clubs. Remove a club before adding another.');return}
  if(payload.carry_yards!==null&&payload.total_yards!==null&&payload.total_yards<payload.carry_yards){status('Total distance should be at least the carry distance.');return}
  busy=true;$('submit').disabled=true;status('Saving club…');
  const {data:{user}}=await supabase.auth.getUser();
