@@ -69,20 +69,25 @@ render();
 import {supabase} from './src/supabase.js';
 const status=document.getElementById('backupStatus');
 const bridge=window.labProgramsBridge;
-let ready=false,owner=null,writing=Promise.resolve(),pending=false;
+let ready=false,owner=null,writing=Promise.resolve(),pending=false,dirty=false;
 const localKey='thelab-programs-v1';
 function announce(message){status.textContent=message}
 function queueSave(){
- if(!ready||!owner||pending)return;
+ if(!ready||!owner)return;
+ dirty=true;
+ if(pending)return;
  pending=true;
  setTimeout(()=>{
   pending=false;
-  const snapshot=JSON.parse(JSON.stringify(bridge.get()));
   writing=writing.then(async()=>{
+   if(!dirty)return;
+   dirty=false;
+   const snapshot=JSON.parse(JSON.stringify(bridge.get()));
+   announce('Syncing your programs…');
    const {error}=await supabase.from('golfer_programs').upsert({user_id:owner,programs:snapshot,updated_at:new Date().toISOString()},{onConflict:'user_id'});
-   if(error)announce('Cloud save failed: '+error.message+'. Your local copy remains available.');
-   else announce('Programs saved to your account.');
-  }).catch(e=>announce('Cloud save failed: '+e.message));
+   if(error){dirty=true;announce('Cloud save failed: '+error.message+'. Your local copy remains available.');}
+   else announce('All programs saved to your account.');
+  }).catch(e=>{dirty=true;announce('Cloud save failed: '+e.message)});
  },400);
 }
 window.addEventListener('lab-programs-changed',queueSave);
