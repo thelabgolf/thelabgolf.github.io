@@ -1,11 +1,12 @@
 import {supabase} from './supabase.js';
 const $=id=>document.getElementById(id),form=$('club-form'),fields=form.elements;
 const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-let userId=null,clubs=[],editId=null,generation=0,busy=false;
+let userId=null,clubs=[],editId=null,generation=0,busy=false,showroomSelected=null;
 const status=t=>$('status').textContent=t;
 function reset(){form.reset();editId=null;$('form-heading').textContent='Add a club';$('submit').textContent='Save club';$('cancel').hidden=true}
 function linkFor(club){const query=club.club_type==='Driver'?'driver':club.club_type==='Putter'?'putting':club.club_type==='Wedge'?'chipping':club.club_type==='Fairway Wood'?'wood':club.club_type==='Hybrid'?'hybrid':'iron';return './practice.html?search='+encodeURIComponent(query)}
-function render(){
+function renderShowroom(){const tabs=$('showroom-club-tabs');if(!tabs)return;const chosen=clubs.find(c=>c.id===showroomSelected)||clubs[0];if(chosen)showroomSelected=chosen.id;else showroomSelected=null;$('showroom-club-name').textContent=chosen?.club_name||'Your bag is ready';$('showroom-club-type').textContent=chosen?.club_type||'Add a club below to get started.';$('showroom-carry').textContent=chosen?.carry_yards??'—';$('showroom-total').textContent=chosen?.total_yards??'—';$('showroom-notes').textContent=chosen?.notes||'';tabs.innerHTML=clubs.map(c=>'<button type="button" data-showroom="'+c.id+'" aria-pressed="'+(c.id===showroomSelected)+'">'+escapeHTML(c.club_name)+'</button>').join('')}
+function render(){renderShowroom();
  const list=[...clubs],sort=$('sort').value;
  list.sort((a,b)=>sort==='name'?a.club_name.localeCompare(b.club_name):sort==='type'?a.club_type.localeCompare(b.club_type):Number(b.carry_yards||0)-Number(a.carry_yards||0));
  $('count').textContent='('+list.length+')';
@@ -71,4 +72,4 @@ $('clubs').addEventListener('click',async e=>{
 $('cancel').onclick=reset;$('sort').onchange=render;$('target-distance').addEventListener('input',render);
 if(supabase)supabase.auth.onAuthStateChange(()=>{Promise.resolve().then(refresh)});refresh();
 
-$('open-bag-3d').addEventListener('click',()=>window.dispatchEvent(new CustomEvent('lab-view-bag-3d',{detail:{clubs:clubs.map(c=>({club_type:c.club_type,club_name:c.club_name}))}})));
+$('showroom-club-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-showroom]');if(b){showroomSelected=b.dataset.showroom;renderShowroom()}});
