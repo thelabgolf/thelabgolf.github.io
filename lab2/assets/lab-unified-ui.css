@@ -41,3 +41,7 @@ body :where(.eyebrow){letter-spacing:.11em;font-weight:850;color:var(--lab-refer
 body :where(main > .academy-lead,main > .academy-sublead){line-height:1.72}
 body :where(.round-actions,.links,.tool-links,.tool-nav)>a{background:#1b2c20}
 @media(max-width:650px){body :where(main > h1,main > .hero h1){font-size:clamp(2.15rem,9vw,3rem);line-height:1.16}body :where(.lab-intro){align-items:stretch;flex-direction:column;padding:17px}body :where(.lab-intro a){width:100%}}
+
+/* Matching Practice Center's compact outlined eyebrow label. */
+body .lab-reference-kicker{display:table;width:max-content;max-width:100%;padding:7px 12px;margin:0 0 16px;border:1px solid #42572f;border-radius:999px;background:#192519;color:#c8f65b;font-size:.75rem;line-height:1.35;letter-spacing:.1em;text-transform:uppercase;font-weight:850}
+body :where(.round-workspace-nav button[aria-pressed="true"],button.action){background:#c8f65b;color:#0c160f}
