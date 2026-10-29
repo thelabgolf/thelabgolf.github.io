@@ -105,3 +105,6 @@ html{scroll-padding-top:84px}
 @media(min-width:900px){
  .shell{max-width:1160px;margin-inline:auto}
 }
+
+/* Match homepage header tint to the shared My Golf Lab header. */
+.topbar{background:#0b1810!important;border-bottom:1px solid #36523c!important;backdrop-filter:none!important}
