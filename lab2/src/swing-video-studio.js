@@ -31,3 +31,12 @@ $('clear-lines').addEventListener('click',()=>{for(const key of ['a','b']){sessi
 $('sync-videos').addEventListener('click',()=>{const a=$('swing-video-a'),b=$('swing-video-b');if(!a.readyState||!b.readyState)return;a.pause();b.pause();a.currentTime=0;b.currentTime=0});
 $('draw-tool').addEventListener('change',e=>{for(const key of ['a','b'])$('draw-'+key).style.pointerEvents=e.target.value==='none'?'none':'auto'});
 window.addEventListener('pagehide',()=>{for(const key of ['a','b'])if(sessions[key].url)URL.revokeObjectURL(sessions[key].url)});
+
+function clock(t){if(!Number.isFinite(t)||t<0)return '0:00';const n=Math.floor(t);return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')}
+for(const key of ['a','b']){
+ const video=$('swing-video-'+key),scrub=$('scrub-'+key),label=$('time-'+key);
+ const update=()=>{const duration=Number.isFinite(video.duration)?video.duration:0;scrub.value=duration?String(Math.round(1000*video.currentTime/duration)):'0';scrub.disabled=!duration;label.textContent=clock(video.currentTime)+' / '+clock(duration)};
+ video.addEventListener('timeupdate',update);video.addEventListener('loadedmetadata',update);video.addEventListener('durationchange',update);
+ scrub.addEventListener('input',()=>{if(Number.isFinite(video.duration)&&video.duration>0){video.currentTime=video.duration*Number(scrub.value)/1000;update()}});
+ update();
+}
