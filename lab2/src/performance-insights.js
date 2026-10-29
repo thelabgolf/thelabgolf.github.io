@@ -1,7 +1,7 @@
 import {supabase} from './supabase.js';
 const $=id=>document.getElementById(id);let rounds=[],practice=[];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const mean=(rows,key)=>{const values=rows.map(x=>Number(x[key])).filter(Number.isFinite);return values.length?(values.reduce((a,b)=>a+b,0)/values.length):null};
+const mean=(rows,key)=>{const values=rows.filter(x=>x[key]!==null&&x[key]!==undefined&&x[key]!=='').map(x=>Number(x[key])).filter(Number.isFinite);return values.length?(values.reduce((a,b)=>a+b,0)/values.length):null};
 const fmt=(n,d=1)=>n===null?'—':n.toFixed(d).replace(/\.0$/,'');
 const date=s=>new Date(s+'T12:00:00');
 function draw(){const days=$('period').value,cutoff=days==='all'?null:new Date(Date.now()-Number(days)*86400000);const filtered=rows=>rows.filter(x=>!cutoff||date(x.played_on||x.practiced_on)>=cutoff);
