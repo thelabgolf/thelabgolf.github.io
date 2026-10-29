@@ -1,12 +1,11 @@
 import {supabase} from './supabase.js';
 const $=id=>document.getElementById(id),form=$('club-form'),fields=form.elements;
 const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-let userId=null,clubs=[],editId=null,generation=0,busy=false,showroomSelected=null;
+let userId=null,clubs=[],editId=null,generation=0,busy=false;
 const status=t=>$('status').textContent=t;
 function reset(){form.reset();editId=null;$('form-heading').textContent='Add a club';$('submit').textContent='Save club';$('cancel').hidden=true}
 function linkFor(club){const query=club.club_type==='Driver'?'driver':club.club_type==='Putter'?'putting':club.club_type==='Wedge'?'chipping':club.club_type==='Fairway Wood'?'wood':club.club_type==='Hybrid'?'hybrid':'iron';return './practice.html?search='+encodeURIComponent(query)}
-function renderShowroom(){const tabs=$('showroom-club-tabs');if(!tabs)return;const chosen=clubs.find(c=>c.id===showroomSelected)||clubs[0];if(chosen)showroomSelected=chosen.id;else showroomSelected=null;$('showroom-club-name').textContent=chosen?.club_name||'Your bag is ready';$('showroom-club-type').textContent=chosen?.club_type||'Add a club below to get started.';$('showroom-carry').textContent=chosen?.carry_yards??'—';$('showroom-total').textContent=chosen?.total_yards??'—';$('showroom-notes').textContent=chosen?.notes||'';tabs.innerHTML=clubs.map(c=>'<button type="button" data-showroom="'+c.id+'" aria-pressed="'+(c.id===showroomSelected)+'">'+escapeHTML(c.club_name)+'</button>').join('')}
-function render(){renderShowroom();
+function render(){
  const list=[...clubs],sort=$('sort').value;
  list.sort((a,b)=>sort==='name'?a.club_name.localeCompare(b.club_name):sort==='type'?a.club_type.localeCompare(b.club_type):Number(b.carry_yards||0)-Number(a.carry_yards||0));
  $('count').textContent='('+list.length+')';
@@ -15,7 +14,7 @@ function render(){renderShowroom();
  const known=clubs.filter(c=>c.carry_yards!==null).sort((a,b)=>Number(b.carry_yards)-Number(a.carry_yards));
  const gaps=known.slice(1).map((c,i)=>Number(known[i].carry_yards)-Number(c.carry_yards));
  $('locker-gap-count').textContent=gaps.length?Math.max(...gaps).toFixed(0)+' yd':'—';
- $('clubs').innerHTML=list.length?list.map(c=>'<article class="club"><div class="eyebrow">'+escapeHTML(c.club_type)+'</div><h3>'+escapeHTML(c.club_name)+'</h3><div class="stats"><span>Carry <strong>'+(c.carry_yards??'—')+'</strong> yd</span><span>Total <strong>'+(c.total_yards??'—')+'</strong> yd</span></div>'+(c.notes?'<p class="muted">'+escapeHTML(c.notes)+'</p>':'')+'<div class="actions"><button type="button" data-view3d="'+c.id+'">View in 3D</button><button class="secondary" data-edit="'+c.id+'">Edit</button><button class="secondary" data-delete="'+c.id+'">Remove</button><a href="'+linkFor(c)+'">Related drills</a></div></article>').join(''):'<div class="panel">No clubs saved yet. Add your first club above.</div>';
+ $('clubs').innerHTML=list.length?list.map(c=>'<article class="club"><div class="eyebrow">'+escapeHTML(c.club_type)+'</div><h3>'+escapeHTML(c.club_name)+'</h3><div class="stats"><span>Carry <strong>'+(c.carry_yards??'—')+'</strong> yd</span><span>Total <strong>'+(c.total_yards??'—')+'</strong> yd</span></div>'+(c.notes?'<p class="muted">'+escapeHTML(c.notes)+'</p>':'')+'<div class="actions"><button class="secondary" data-edit="'+c.id+'">Edit</button><button class="secondary" data-delete="'+c.id+'">Remove</button><a href="'+linkFor(c)+'">Related drills</a></div></article>').join(''):'<div class="panel">No clubs saved yet. Add your first club above.</div>';
  const rec=[],dist=clubs.filter(c=>c.carry_yards!==null).sort((a,b)=>Number(b.carry_yards)-Number(a.carry_yards));
  if(!clubs.length)rec.push('Add your clubs to unlock distance-gap and equipment-specific recommendations.');
  else{
@@ -64,12 +63,9 @@ form.addEventListener('submit',async e=>{
  reset();render();status('Club saved to your account.');
 });
 $('clubs').addEventListener('click',async e=>{
- const view=e.target.closest('[data-view3d]');if(view){const c=clubs.find(x=>x.id===view.dataset.view3d);if(c)window.dispatchEvent(new CustomEvent('lab-view-club-3d',{detail:{name:c.club_name,type:c.club_type}}));return}
  const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
  if(edit){const c=clubs.find(x=>x.id===edit.dataset.edit);if(!c)return;editId=c.id;for(const key of ['club_name','club_type','carry_yards','total_yards','notes'])fields[key].value=c[key]??'';$('form-heading').textContent='Edit '+c.club_name;$('submit').textContent='Save changes';$('cancel').hidden=false;form.scrollIntoView({behavior:'smooth'});return}
  if(del){const c=clubs.find(x=>x.id===del.dataset.delete);if(!c||!userId||!confirm('Remove '+c.club_name+' from your locker?'))return;const owner=userId,token=generation;status('Removing club…');const {error}=await supabase.from('golfer_clubs').delete().eq('user_id',owner).eq('id',c.id);if(token!==generation)return;if(error){status('Could not remove club: '+error.message);return}clubs=clubs.filter(x=>x.id!==c.id);if(editId===c.id)reset();render();status('Club removed.')}
 });
 $('cancel').onclick=reset;$('sort').onchange=render;$('target-distance').addEventListener('input',render);
 if(supabase)supabase.auth.onAuthStateChange(()=>{Promise.resolve().then(refresh)});refresh();
-
-$('showroom-club-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-showroom]');if(b){showroomSelected=b.dataset.showroom;renderShowroom()}});
