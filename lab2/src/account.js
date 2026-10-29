@@ -33,7 +33,7 @@ async function loadAccountTraining(user){
   if(sessionResult.error)recent.innerHTML='<h2>Recent practice</h2><p>Practice history could not load. Try again later.</p>';
   else {
    const sessions=sessionResult.data||[];
-   recent.innerHTML='<h2>Recent practice</h2>'+(sessions.length?'<div>'+sessions.map(x=>'<article style="padding:12px 0;border-top:1px solid #454b4f"><strong>'+esc(x.drill_title||'Practice session')+'</strong><p>'+esc(x.practiced_on||'')+' · '+Number(x.successes||0)+' / '+Number(x.attempts||0)+' successful attempts</p></article>').join('')+'</div>':'<p>No practice sessions saved to your account yet.</p>')+'<a href="./practice.html">Go to Practice Center →</a>';
+   recent.innerHTML='<h2>Recent practice</h2>'+(sessions.length?'<div>'+sessions.map(x=>'<article style="padding:12px 0;border-top:1px solid #454b4f"><strong>'+esc(x.drill_title||'Practice session')+'</strong><p>'+esc(x.practiced_on||'')+' · '+Number(x.successes||0)+' / '+Number(x.attempts||0)+' successful attempts</p></article>').join('')+'</div>':'<p>No practice sessions saved to your account yet.</p>')+'<a href="./practice-history.html">View full Practice History →</a> · <a href="./practice.html">Practice Center →</a>';
   }
  }
  plans.innerHTML='<h2>Saved training programs</h2><p>'+items.length+' program'+(items.length===1?'':'s')+' saved to your account</p>'+items.slice(0,5).map(p=>'<article style="padding:12px 0;border-top:1px solid #454b4f"><strong>'+esc(p.name||p.title||'Training program')+'</strong><p>'+esc(p.status||'Ready')+'</p></article>').join('')+'<a href="./programs.html">Open, edit and track programs →</a>';
