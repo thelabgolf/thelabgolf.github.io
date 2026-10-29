@@ -67,6 +67,5 @@ $('clubs').addEventListener('click',async e=>{
  if(edit){const c=clubs.find(x=>x.id===edit.dataset.edit);if(!c)return;editId=c.id;for(const key of ['club_name','club_type','carry_yards','total_yards','loft_degrees','notes'])fields[key].value=c[key]??'';$('form-heading').textContent='Edit '+c.club_name;$('submit').textContent='Save changes';$('cancel').hidden=false;form.scrollIntoView({behavior:'smooth'});return}
  if(del){const c=clubs.find(x=>x.id===del.dataset.delete);if(!c||!userId||!confirm('Remove '+c.club_name+' from your locker?'))return;const owner=userId,token=generation;status('Removing club…');const {error}=await supabase.from('golfer_clubs').delete().eq('user_id',owner).eq('id',c.id);if(token!==generation)return;if(error){status('Could not remove club: '+error.message);return}clubs=clubs.filter(x=>x.id!==c.id);if(editId===c.id)reset();render();status('Club removed.')}
 });
-$('quick-add').addEventListener('click',e=>{const b=e.target.closest('[data-name]');if(!b)return;fields.club_name.value=b.dataset.name;fields.club_type.value=b.dataset.type;fields.club_name.focus()});
 $('cancel').onclick=reset;$('sort').onchange=render;$('target-distance').addEventListener('input',render);
 if(supabase)supabase.auth.onAuthStateChange(()=>{Promise.resolve().then(refresh)});refresh();
