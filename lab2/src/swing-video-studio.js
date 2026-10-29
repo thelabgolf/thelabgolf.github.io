@@ -40,3 +40,12 @@ for(const key of ['a','b']){
  scrub.addEventListener('input',()=>{if(Number.isFinite(video.duration)&&video.duration>0){video.currentTime=video.duration*Number(scrub.value)/1000;update()}});
  update();
 }
+
+const comparisonToggle=$('toggle-comparison'),comparisonBay=$('comparison-bay');
+comparisonToggle.addEventListener('click',()=>{
+ const opening=comparisonBay.hidden;
+ comparisonBay.hidden=!opening;
+ comparisonToggle.setAttribute('aria-expanded',String(opening));
+ comparisonToggle.textContent=opening?'− Hide comparison':'+ Compare another swing';
+ requestAnimationFrame(()=>{draw('a');if(opening)draw('b')});
+});
