@@ -105,7 +105,7 @@ else {
    const previousOwner=localStorage.getItem(ownerKey);
    const canImport=!previousOwner||previousOwner===owner;
    const merged=new Map(remote.filter(p=>p&&typeof p.id==='string').map(p=>[p.id,p]));
-   if(canImport)for(const p of local){if(p&&typeof p.id==='string'&&!merged.has(p.id))merged.set(p.id,p)}
+   if(canImport&&!data)for(const p of local){if(p&&typeof p.id==='string'&&!merged.has(p.id))merged.set(p.id,p)}
    const combined=[...merged.values()];
    localStorage.setItem(ownerKey,owner);
    bridge.set(combined);
