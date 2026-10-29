@@ -70,3 +70,5 @@ $('clubs').addEventListener('click',async e=>{
 });
 $('cancel').onclick=reset;$('sort').onchange=render;$('target-distance').addEventListener('input',render);
 if(supabase)supabase.auth.onAuthStateChange(()=>{Promise.resolve().then(refresh)});refresh();
+
+$('open-bag-3d').addEventListener('click',()=>window.dispatchEvent(new CustomEvent('lab-view-bag-3d',{detail:{clubs:clubs.map(c=>({club_type:c.club_type,club_name:c.club_name}))}})));
