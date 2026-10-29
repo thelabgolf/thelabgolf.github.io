@@ -30,10 +30,10 @@ function render(){
  $('entries').innerHTML=entries.length?entries.map(e=>'<article class="entry"><small class="muted">'+esc(e.recorded_on)+'</small><h3>'+esc(e.club)+'</h3><div class="tags"><span class="tag">'+esc(e.miss||'None')+'</span><span class="tag">'+esc(e.checkpoint||'Setup')+'</span></div>'+(e.observation?'<p>'+esc(e.observation)+'</p>':'')+(e.focus?'<p><strong>Next focus:</strong> '+esc(e.focus)+'</p>':'')+(e.video_url?'<p><a target="_blank" rel="noopener noreferrer" href="'+esc(e.video_url)+'">Open swing video reference ↗</a></p>':'')+'<div class="actions"><button type="button" class="secondary" data-edit="'+esc(e.id)+'">Edit</button><button type="button" class="secondary" data-delete="'+esc(e.id)+'">Delete</button></div></article>').join(''):'<div class="empty"><h3>No swing sessions yet</h3><p class="muted">Record your first session to start spotting patterns over time.</p></div>';
 }
 async function refresh(){
- const token=++generation;owner=null;entries=[];reset();render();
+ const token=++generation;owner=null;entries=[];form.hidden=true;$('loading').hidden=false;reset();render();
  if(!supabase){notify('Swing Lab cloud connection is unavailable.');return}
  const {data:{user},error}=await supabase.auth.getUser();if(token!==generation)return;
- if(error||!user){$('loading').textContent='Sign in through Account to use your private Swing Lab.';notify('Sign in required.');return}
+ if(error||!user){$('loading').innerHTML='Sign in through <a href="./account.html">Account</a> to use your private Swing Lab.';notify('Sign in required.');return}
  owner=user.id;$('loading').hidden=true;form.hidden=false;notify('Loading your swing journal…');
  const result=await supabase.from('swing_journal').select('id,recorded_on,club,miss,checkpoint,observation,focus,video_url').eq('user_id',owner).order('recorded_on',{ascending:false}).order('created_at',{ascending:false}).limit(200);
  if(token!==generation)return;
@@ -56,8 +56,8 @@ form.addEventListener('submit',async e=>{
 });
 $('entries').addEventListener('click',async e=>{
  const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
- if(edit){const item=entries.find(x=>x.id===edit.dataset.edit);if(!item)return;editId=item.id;for(const key of ['recorded_on','club','miss','checkpoint','observation','focus','video_url'])fields[key].value=item[key]??'';$('form-heading').textContent='Edit swing entry';$('save-entry').textContent='Save changes';$('cancel-edit').hidden=false;form.scrollIntoView({behavior:'smooth'});render();return}
+ if(edit){document.querySelector('[data-open-swing="journal"]')?.click();const item=entries.find(x=>x.id===edit.dataset.edit);if(!item)return;editId=item.id;for(const key of ['recorded_on','club','miss','checkpoint','observation','focus','video_url'])fields[key].value=item[key]??'';$('form-heading').textContent='Edit swing entry';$('save-entry').textContent='Save changes';$('cancel-edit').hidden=false;form.scrollIntoView({behavior:'smooth'});render();return}
  if(del){const item=entries.find(x=>x.id===del.dataset.delete);if(!item||!owner||!confirm('Delete this swing entry?'))return;const token=generation,userId=owner;notify('Deleting…');const {error}=await supabase.from('swing_journal').delete().eq('user_id',userId).eq('id',item.id);if(token!==generation)return;if(error){notify('Delete failed: '+error.message);return}entries=entries.filter(x=>x.id!==item.id);render();notify('Swing entry deleted.')}
 });
 $('cancel-edit').onclick=()=>{reset();render()};
-if(supabase)supabase.auth.onAuthStateChange(()=>{Promise.resolve().then(refresh())});refresh();
+if(supabase)supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user?.id!==owner)queueMicrotask(refresh)});refresh();
