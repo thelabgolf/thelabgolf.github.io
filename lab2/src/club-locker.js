@@ -9,6 +9,11 @@ function render(){
  const list=[...clubs],sort=$('sort').value;
  list.sort((a,b)=>sort==='name'?a.club_name.localeCompare(b.club_name):sort==='type'?a.club_type.localeCompare(b.club_type):Number(b.carry_yards||0)-Number(a.carry_yards||0));
  $('count').textContent='('+list.length+')';
+ $('locker-club-count').textContent=clubs.length;
+ $('locker-distance-count').textContent=clubs.filter(c=>c.carry_yards!==null).length;
+ const known=clubs.filter(c=>c.carry_yards!==null).sort((a,b)=>Number(b.carry_yards)-Number(a.carry_yards));
+ const gaps=known.slice(1).map((c,i)=>Number(known[i].carry_yards)-Number(c.carry_yards));
+ $('locker-gap-count').textContent=gaps.length?Math.max(...gaps).toFixed(0)+' yd':'—';
  $('clubs').innerHTML=list.length?list.map(c=>'<article class="club"><div class="eyebrow">'+escapeHTML(c.club_type)+'</div><h3>'+escapeHTML(c.club_name)+'</h3><div class="stats"><span>Carry <strong>'+(c.carry_yards??'—')+'</strong> yd</span><span>Total <strong>'+(c.total_yards??'—')+'</strong> yd</span><span>Loft <strong>'+(c.loft_degrees??'—')+'</strong>°</span></div>'+(c.notes?'<p class="muted">'+escapeHTML(c.notes)+'</p>':'')+'<div class="actions"><button class="secondary" data-edit="'+c.id+'">Edit</button><button class="secondary" data-delete="'+c.id+'">Remove</button><a href="'+linkFor(c)+'">Related drills</a></div></article>').join(''):'<div class="panel">No clubs saved yet. Add your first club above.</div>';
  const rec=[],dist=clubs.filter(c=>c.carry_yards!==null).sort((a,b)=>Number(b.carry_yards)-Number(a.carry_yards));
  if(!clubs.length)rec.push('Add your clubs to unlock distance-gap and equipment-specific recommendations.');
@@ -62,5 +67,6 @@ $('clubs').addEventListener('click',async e=>{
  if(edit){const c=clubs.find(x=>x.id===edit.dataset.edit);if(!c)return;editId=c.id;for(const key of ['club_name','club_type','carry_yards','total_yards','loft_degrees','notes'])fields[key].value=c[key]??'';$('form-heading').textContent='Edit '+c.club_name;$('submit').textContent='Save changes';$('cancel').hidden=false;form.scrollIntoView({behavior:'smooth'});return}
  if(del){const c=clubs.find(x=>x.id===del.dataset.delete);if(!c||!userId||!confirm('Remove '+c.club_name+' from your locker?'))return;const owner=userId,token=generation;status('Removing club…');const {error}=await supabase.from('golfer_clubs').delete().eq('user_id',owner).eq('id',c.id);if(token!==generation)return;if(error){status('Could not remove club: '+error.message);return}clubs=clubs.filter(x=>x.id!==c.id);if(editId===c.id)reset();render();status('Club removed.')}
 });
+$('quick-add').addEventListener('click',e=>{const b=e.target.closest('[data-name]');if(!b)return;fields.club_name.value=b.dataset.name;fields.club_type.value=b.dataset.type;fields.club_name.focus()});
 $('cancel').onclick=reset;$('sort').onchange=render;$('target-distance').addEventListener('input',render);
 if(supabase)supabase.auth.onAuthStateChange(()=>{Promise.resolve().then(refresh)});refresh();
