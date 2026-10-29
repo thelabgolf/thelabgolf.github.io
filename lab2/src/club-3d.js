@@ -29,6 +29,34 @@ function makeClub(type){
  }
  group.position.y=-1.1;return group;
 }
+function makeBag(){
+ const g=new THREE.Group();
+ const leather=new THREE.MeshStandardMaterial({color:0x17221d,roughness:.78,metalness:.08});
+ const panel=new THREE.MeshStandardMaterial({color:0x354d39,roughness:.72});
+ const trim=new THREE.MeshStandardMaterial({color:0xc4ed4b,metalness:.25,roughness:.35});
+ // Tapered fabric body, bottom foot, top cuff, side pockets and carrying strap.
+ mesh(new THREE.CylinderGeometry(.46,.69,2.25,32,1),leather,g,[0,-.35,0]);
+ mesh(new THREE.CylinderGeometry(.49,.48,.2,32),trim,g,[0,.83,0]);
+ mesh(new THREE.CylinderGeometry(.68,.7,.16,32),dark,g,[0,-1.55,0]);
+ mesh(new THREE.BoxGeometry(.44,1.05,.12),panel,g,[0,-.36,.58]);
+ mesh(new THREE.BoxGeometry(.5,.035,.14),trim,g,[0,.12,.65]);
+ mesh(new THREE.BoxGeometry(.48,.38,.15),panel,g,[0,-1.07,.59]);
+ mesh(new THREE.TorusGeometry(.47,.035,10,32,Math.PI),trim,g,[.49,.08,0],[0,Math.PI/2,.18]);
+ const names=['Driver','Fairway Wood','Hybrid','Iron','Iron','Wedge','Putter'];
+ const saved=window.labLockerBagClubs||[];
+ const types=saved.length?saved.slice(0,14).map(c=>c.club_type):names;
+ const slots=types.length;
+ types.forEach((type,i)=>{
+   const c=makeClub(type);c.scale.setScalar(.51);
+   const angle=i*2.39996;
+   const radius=.12+Math.sqrt(i/Math.max(1,slots))*.28;
+   c.position.set(Math.cos(angle)*radius,1.17+(i%3)*.035,Math.sin(angle)*radius);
+   c.rotation.z=(Math.cos(angle))*.15;c.rotation.x=(Math.sin(angle))*.12;
+   g.add(c);
+ });
+ g.position.y=-.15;
+ return g;
+}
 function setup(){
  if(renderer)return;
  scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(40,1,.1,100);camera.position.set(4.6,2.1,6.3);camera.lookAt(0,.4,0);
@@ -41,6 +69,7 @@ function setup(){
 }
 function resize(){if(!renderer)return;const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
 function animate(){if(!dialog.open)return;frame=requestAnimationFrame(animate);if(club&&!down)club.rotation.y+=.002;renderer.render(scene,camera)}
+window.addEventListener('lab-view-bag-3d',e=>{setup();if(club)scene.remove(club);window.labLockerBagClubs=e.detail.clubs||[];club=makeBag();scene.add(club);document.getElementById('club-3d-title').textContent='My Golf Bag · 3D showroom';dialog.showModal();resize();cancelAnimationFrame(frame);animate()});
 window.addEventListener('lab-view-club-3d',e=>{setup();if(club)scene.remove(club);club=makeClub(e.detail.type);scene.add(club);document.getElementById('club-3d-title').textContent=e.detail.name+' · 3D view';dialog.showModal();resize();cancelAnimationFrame(frame);animate()});
 document.getElementById('close-3d').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('close',()=>{cancelAnimationFrame(frame);down=false});
