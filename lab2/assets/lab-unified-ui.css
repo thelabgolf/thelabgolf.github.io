@@ -6,3 +6,11 @@ body :where(.round-actions,.links,.tool-links,.tool-nav){display:flex;flex-wrap:
 body :where(.round-actions,.links,.tool-links,.tool-nav)>a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 15px;border:1px solid var(--lab-line);border-radius:10px;background:var(--lab-panel);color:var(--lab-ink);text-decoration:none;font-size:14px;font-weight:750;line-height:1.35}
 body :where(.round-actions,.links,.tool-links,.tool-nav)>a:hover{border-color:var(--lab-lime);background:#203225}
 @media(max-width:700px){body{overflow-x:clip}body :where(input,select,textarea){font-size:16px}body :where(.round-actions,.links,.tool-links,.tool-nav)>a{flex:1 1 42%;text-align:center}body :where(.panel,.card,.entry){min-width:0}}
+
+/* Unified header for performance tools: same logo/navigation as Academy. */
+.lab-unified-header{width:100%;border-bottom:1px solid var(--lab-line);background:#0b1510;padding:0 20px!important;max-width:none!important;display:block!important}
+.lab-unified-header-inner{max-width:1100px;margin:auto;min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-unified-logo{display:inline-flex;align-items:center;flex-shrink:0}.lab-unified-logo img{display:block;width:112px;height:auto;max-height:60px;object-fit:contain;margin:0!important}
+.lab-unified-menu{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.lab-unified-menu a{color:var(--lab-ink);font-size:14px;font-weight:700;text-decoration:none;padding:11px 13px;border-radius:9px;min-height:44px;display:inline-flex;align-items:center}.lab-unified-menu a:hover,.lab-unified-menu a[aria-current=page]{background:#203225;color:var(--lab-lime)}
+.lab-page-back{display:inline-flex;align-items:center;min-height:44px;margin-bottom:14px;color:var(--lab-lime);font-weight:750;font-size:14px;text-decoration:none}.lab-page-back:hover{text-decoration:underline}
+@media(max-width:700px){.lab-unified-header{padding:10px 16px!important}.lab-unified-header-inner{display:grid;gap:8px}.lab-unified-logo img{width:100px}.lab-unified-menu{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none}.lab-unified-menu a{font-size:13px;padding:10px 11px;white-space:nowrap}.lab-unified-menu::-webkit-scrollbar{display:none}}
