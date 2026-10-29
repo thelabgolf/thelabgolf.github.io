@@ -103,6 +103,9 @@ else {
    // Never merge another member's browser plans into this account.
    const ownerKey='thelab-programs-owner-v1';
    const previousOwner=localStorage.getItem(ownerKey);
+   // A different member must never inherit the prior member's browser program list.
+   if(previousOwner&&previousOwner!==owner){bridge.set([]);try{localStorage.removeItem(localKey)}catch(e){}}
+
    const canImport=!previousOwner||previousOwner===owner;
    const merged=new Map(remote.filter(p=>p&&typeof p.id==='string').map(p=>[p.id,p]));
    if(canImport&&!data)for(const p of local){if(p&&typeof p.id==='string'&&!merged.has(p.id))merged.set(p.id,p)}
