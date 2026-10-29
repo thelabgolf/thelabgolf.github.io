@@ -85,12 +85,19 @@ function queueSave(){
    const snapshot=JSON.parse(JSON.stringify(bridge.get()));
    announce('Syncing your programs…');
    const {error}=await supabase.from('golfer_programs').upsert({user_id:owner,programs:snapshot,updated_at:new Date().toISOString()},{onConflict:'user_id'});
-   if(error){dirty=true;announce('Cloud save failed: '+error.message+'. Your local copy remains available.');}
+   if(error){dirty=true;announce('Cloud save failed: '+error.message+'. Your local copy remains available. Reopen this page or reconnect to retry.');}
    else announce('All programs saved to your account.');
   }).catch(e=>{dirty=true;announce('Cloud save failed: '+e.message)});
  },400);
 }
 window.addEventListener('lab-programs-changed',queueSave);
+window.addEventListener('online',()=>{
+ if(ready&&dirty){announce('Connection restored. Saving your programs…');queueSave();}
+});
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden&&ready&&dirty)queueSave();
+});
+
 async function initializeProgramSync(){
 if(!supabase){announce('Cloud saving is not configured. Programs remain on this device.');}
 else {
