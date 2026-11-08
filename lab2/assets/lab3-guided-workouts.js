@@ -60,5 +60,17 @@ document.addEventListener('click',e=>{const btn=e.target.closest('[data-resume-p
 const observer=new MutationObserver(()=>{observer.disconnect();addButtons();observer.observe($('#saved'),{childList:true,subtree:true})});if($('#saved')){addButtons();observer.observe($('#saved'),{childList:true,subtree:true})}
 const startId=new URLSearchParams(location.search).get('startWorkout');
 if(startId){const start=()=>{const plan=window.labProgramsBridge?.get?.().find(p=>p.id===startId);const index=plan?.weeklySessions?.findIndex(s=>!s.done&&!s.completed)??-1;if(plan&&index>=0){open(plan,index,document.querySelector('[href*="startWorkout"]')||document.body);history.replaceState(null,'',location.pathname);return true}return false};if(!start()){window.addEventListener('load',()=>{if(!start()){const feedback=document.getElementById('feedback');if(feedback)feedback.textContent='Could not open this workout. Please reopen your program and choose a session.'}},{once:true})}}
+document.addEventListener('click',e=>{
+ const btn=e.target.closest('[data-inline-drill]');if(!btn)return;
+ const plan=window.labProgramsBridge?.get?.().find(p=>p.id===btn.dataset.planId);
+ const index=Number(btn.dataset.inlineDrill),session=plan?.weeklySessions?.[index],box=btn.nextElementSibling;
+ if(!session||!box)return;
+ const opening=box.hidden;box.hidden=!opening;btn.setAttribute('aria-expanded',String(opening));btn.textContent=opening?'Hide drill ↑':'View drill ↓';
+ if(!opening)return;
+ const skill=Number.isInteger(session.skillIndex)?session.skillIndex:Number.isInteger(session.skill)?session.skill:Math.max(0,['Driver accuracy','Fix driver slice','Iron contact','Fairway woods','Chipping','Pitching','Putting','Bunkers','Course strategy','Fitness','Mental game'].indexOf(session.skill));
+ const d=catalog[skill]||catalog[2];
+ box.innerHTML='<section style="padding:16px;margin-top:12px;border:1px solid #526052;border-radius:12px;background:#15201a"><h3 style="color:#c7f43b;margin-top:0">'+esc(d.name)+'</h3><p>'+esc(d.purpose)+'</p><strong>Setup</strong><p>'+esc(d.setup)+'</p><strong>Workout steps</strong><ol>'+d.steps.map(x=>'<li style="margin:8px 0">'+esc(x)+'</li>').join('')+'</ol><p><strong>Success means:</strong> '+esc(d.success)+'</p><p><strong>Suggested test:</strong> '+d.attempts+' attempts · '+Math.round(d.target*100)+'% initial benchmark</p><p><strong>If struggling:</strong> '+esc(d.fix)+'</p><button type="button" class="btn lab-inline-start">Record results and finish workout</button></section>';
+ box.querySelector('.lab-inline-start').onclick=()=>open(plan,index,btn);
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close()});
 })();
