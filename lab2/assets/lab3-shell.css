@@ -10,3 +10,10 @@ body.lab3-ready header.site-top,body.lab3-ready header.lab-header,body.lab3-read
 body.lab3-ready #lab3-header{background:#091b13!important;border-bottom:1px solid #294638!important}
 body.lab3-ready #lab3-header .lab3-head-inner>a{background:transparent!important;isolation:isolate;line-height:0}
 body.lab3-ready #lab3-header img{mix-blend-mode:screen!important;filter:contrast(1.3) brightness(1.08);background:transparent!important;border:0!important;box-shadow:none!important}
+
+/* Final unified header: green reference, image black pixels cannot darken it. */
+html body.lab3-ready #lab3-header{background-color:#03180f!important;border-color:#355345!important}
+html body.lab3-ready #lab3-header .lab3-head-inner{background:transparent!important}
+html body.lab3-ready #lab3-header .lab3-head-inner>a{background:transparent!important;isolation:auto!important}
+html body.lab3-ready #lab3-header img{mix-blend-mode:lighten!important;filter:none!important;opacity:1!important;width:142px!important;max-height:72px!important;object-fit:contain!important}
+@media(max-width:800px){html body.lab3-ready #lab3-header img{width:142px!important}html body.lab3-ready #lab3-header{padding:20px 22px!important}}
