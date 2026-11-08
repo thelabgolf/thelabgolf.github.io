@@ -5,3 +5,8 @@ body.lab3-ready header.site-top,body.lab3-ready header.lab-header,body.lab3-read
 
 /* Blend the logo's baked-in black background into the dark shared header. */
 #lab3-header img{mix-blend-mode:screen;background:transparent!important}
+
+/* Lab 3 mobile header: match dashboard green and remove image matte visually. */
+body.lab3-ready #lab3-header{background:#091b13!important;border-bottom:1px solid #294638!important}
+body.lab3-ready #lab3-header .lab3-head-inner>a{background:transparent!important;isolation:isolate;line-height:0}
+body.lab3-ready #lab3-header img{mix-blend-mode:screen!important;filter:contrast(1.3) brightness(1.08);background:transparent!important;border:0!important;box-shadow:none!important}
