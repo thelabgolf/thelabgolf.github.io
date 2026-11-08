@@ -213,4 +213,31 @@ document.addEventListener('click',function(event){
   else{const feedback=document.getElementById('feedback');if(feedback)feedback.textContent='No training sessions found in this plan.'}
  }
 });
+</script><script>
+document.addEventListener('submit',function(event){
+ const form=event.target.closest('form.lab-session-results');
+ if(!form)return;
+ event.preventDefault();
+ const msg=form.querySelector('.lab-result-message');
+ const a=Number(form.elements.attempts.value),s=Number(form.elements.successes.value);
+ if(!Number.isInteger(a)||a<1||a>500||!Number.isInteger(s)||s<0||s>a){msg.textContent='Enter valid attempts and successes (successes cannot exceed attempts).';return}
+ const bridge=window.labProgramsBridge,programs=bridge?.get?.(),plan=programs?.find(p=>String(p.id)===form.dataset.planId),index=Number(form.dataset.resultsSession),session=plan?.weeklySessions?.[index];
+ if(!session){msg.textContent='Could not find this session. Reopen the program and try again.';return}
+ const original={...session};
+ const now=new Date(),date=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+ session.attempts=a;session.successes=s;session.miss=form.elements.miss.value;session.notes=form.elements.notes.value.slice(0,500);session.done=true;session.completedAt=now.toISOString();
+ plan.completed=plan.weeklySessions.filter(x=>x.done||x.completed).length;
+ const entry={id:'program-'+plan.id+'-'+index+'-'+now.getTime(),title:(session.skill||'Training')+' · Guided drill',date,attempts:a,successes:s,timestamp:session.completedAt,programId:plan.id};
+ try{
+  const previous=JSON.parse(localStorage.getItem('thelab-practice-v1')||'[]');
+  localStorage.setItem('thelab-programs-v1',JSON.stringify(programs));
+  localStorage.setItem('thelab-practice-v1',JSON.stringify([entry,...(Array.isArray(previous)?previous:[])].slice(0,500)));
+ }catch(error){Object.assign(session,original);msg.textContent='Unable to save on this device: '+error.message;return}
+ msg.textContent='Saved! '+Math.round(s/a*100)+'% success. Workout marked complete.';
+ window.dispatchEvent(new Event('lab-programs-changed'));
+ window.dispatchEvent(new Event('lab-practice-changed'));
+ const check=form.closest('details')?.parentElement?.querySelector('[data-weekly-check]');
+ if(check)check.checked=true;
+ const submit=form.querySelector('[type="submit"]');if(submit){submit.disabled=true;submit.textContent='Saved ✓'}
+});
 </script><script src="./assets/lab3-guided-workouts.js" defer></script><script type="module" src="./assets/lab3-shell.js"></script></body></html>
