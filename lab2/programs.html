@@ -44,7 +44,7 @@ const build=p=>Array.from({length:p.weeks},(_,w)=>({week:w+1,sessions:Array.from
 const coaching={
 1:['10 balls: aim at a clear target and record whether each shot starts left, straight or right. Also record its curve.','10 slow half-swings: feel the clubface returning less open at impact. Avoid forcing the hands to roll aggressively.','15 balls: set an intermediate target and swing at 60–75% effort. Count shots that start near the intended line and curve less right.'],
 0:['10 balls: tee up and rehearse balanced driver setup, then hit at 70% effort.','15 balls: choose a fairway-width target and record how many finish inside it.','10 balls: alternate left and right edge targets, reset your routine each shot.'],
-1:['10 rehearsals: brush ground just after a marked ball position.','15 balls: hit controlled mid-irons and note solid contact versus thin or heavy.','10 balls: change target after every shot and finish balanced.'],
+2:['10 rehearsals: brush ground just after a marked ball position.','15 balls: hit controlled mid-irons and note solid contact versus thin or heavy.','10 balls: change target after every shot and finish balanced.'],
 3:['10 rehearsals: sweep a tee without digging into the ground.','15 balls: hit fairway woods from a low tee, then from turf if contact is solid.','10 balls: aim at a wide landing zone; count playable shots.'],
 4:['10 chips: land on a towel or small marked zone.','15 chips: use the same landing spot and compare rollout.','10 chips: vary distance while keeping your setup consistent.'],
 5:['10 pitches: rehearse a consistent backswing length.','15 pitches: alternate short and medium landing zones.','10 pitches: choose one landing spot and record how many land close.'],
@@ -61,7 +61,7 @@ render=function(){
  originalRender();
  document.querySelectorAll('#saved article').forEach((article,index)=>{
  const id=article.querySelector('[data-action="delete"]')?.dataset.id;const p=programs.find(x=>x.id===id);if(!p)return;
- if(p.source==='weekly-planner')return;
+ if(p.source==='weekly-planner'||p.source==='guided-preset'||p.source==='custom-guided')return;
  const button=document.createElement('button');button.className='btn ghost';button.textContent='Open training plan';button.type='button';button.setAttribute('aria-expanded','false');
  const container=document.createElement('div');container.className='week-plan';container.hidden=true;
  button.onclick=()=>{
@@ -181,4 +181,4 @@ document.addEventListener('click',e=>{
  e.preventDefault();opener=link;frame.src=url.href;overlay.hidden=false;document.body.classList.add('lab-drill-open');back.focus();
 });
 })();
-</script><script type="module" src="./assets/lab3-shell.js"></script></body></html>
+</script><script src="./assets/lab3-guided-workouts.js" defer></script><script type="module" src="./assets/lab3-shell.js"></script></body></html>
