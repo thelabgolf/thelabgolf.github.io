@@ -72,5 +72,6 @@ document.addEventListener('click',e=>{
  box.innerHTML='<section style="padding:16px;margin-top:12px;border:1px solid #526052;border-radius:12px;background:#15201a"><h3 style="color:#c7f43b;margin-top:0">'+esc(d.name)+'</h3><p>'+esc(d.purpose)+'</p><strong>Setup</strong><p>'+esc(d.setup)+'</p><strong>Workout steps</strong><ol>'+d.steps.map(x=>'<li style="margin:8px 0">'+esc(x)+'</li>').join('')+'</ol><p><strong>Success means:</strong> '+esc(d.success)+'</p><p><strong>Suggested test:</strong> '+d.attempts+' attempts · '+Math.round(d.target*100)+'% initial benchmark</p><p><strong>If struggling:</strong> '+esc(d.fix)+'</p><button type="button" class="btn lab-inline-start">Record results and finish workout</button></section>';
  box.querySelector('.lab-inline-start').onclick=()=>open(plan,index,btn);
 });
+document.addEventListener('click',e=>{const btn=e.target.closest('[data-start-session]');if(!btn)return;const plan=window.labProgramsBridge?.get?.().find(p=>p.id===btn.dataset.planId);if(plan)open(plan,Number(btn.dataset.startSession),btn)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close()});
 })();
