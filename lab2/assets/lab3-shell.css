@@ -17,3 +17,6 @@ html body.lab3-ready #lab3-header .lab3-head-inner{background:transparent!import
 html body.lab3-ready #lab3-header .lab3-head-inner>a{background:transparent!important;isolation:auto!important}
 html body.lab3-ready #lab3-header img{mix-blend-mode:lighten!important;filter:none!important;opacity:1!important;width:142px!important;max-height:72px!important;object-fit:contain!important}
 @media(max-width:800px){html body.lab3-ready #lab3-header img{width:142px!important}html body.lab3-ready #lab3-header{padding:20px 22px!important}}
+
+/* Compact consistent mobile header; override earlier oversized rules. */
+@media(max-width:800px){html body.lab3-ready #lab3-header{height:94px!important;min-height:0!important;padding:8px 20px!important;display:flex!important;align-items:center!important}html body.lab3-ready #lab3-header .lab3-head-inner{width:100%!important;margin:0!important}html body.lab3-ready #lab3-header img{width:115px!important;max-height:64px!important;height:auto!important}}
