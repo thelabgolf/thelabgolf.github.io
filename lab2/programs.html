@@ -181,4 +181,23 @@ document.addEventListener('click',e=>{
  e.preventDefault();opener=link;frame.src=url.href;overlay.hidden=false;document.body.classList.add('lab-drill-open');back.focus();
 });
 })();
+</script><script>
+document.addEventListener('click',function(event){
+ const button=event.target.closest('[data-expand-training]');
+ if(!button)return;
+ const article=button.closest('article');
+ const details=article&&article.querySelector('details.weekly-detail');
+ if(details){
+  details.open=true;
+  button.setAttribute('aria-expanded','true');
+  details.scrollIntoView({behavior:'smooth',block:'start'});
+  const first=details.querySelector('.lab-guided-open');
+  if(first){first.focus({preventScroll:true})}
+ }else{
+  const planButton=article&&article.querySelector('.week-plan');
+  const openButton=article&&Array.from(article.querySelectorAll('button')).find(x=>x.textContent==='Open training plan');
+  if(openButton){openButton.click();openButton.scrollIntoView({behavior:'smooth',block:'center'})}
+  else{const feedback=document.getElementById('feedback');if(feedback)feedback.textContent='No training sessions found in this plan.'}
+ }
+});
 </script><script src="./assets/lab3-guided-workouts.js" defer></script><script type="module" src="./assets/lab3-shell.js"></script></body></html>
