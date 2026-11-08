@@ -60,7 +60,7 @@ function CompletedProgramCard({programs}){
    <strong style={{color:'#c7f43b'}}>RECOMMENDED NEXT</strong>
    <h3 style={{margin:'8px 0'}}>{current.recommendation.title}</h3>
    <p style={{margin:'4px 0 12px'}}>{current.recommendation.reason}</p>
-   <a className="lab-completed-action" href="./programs.html#guided-programs" style={{display:'inline-flex',minHeight:44,alignItems:'center',padding:'10px 14px',background:'#c7f43b',color:'#101710',borderRadius:10,fontWeight:800,textDecoration:'none'}}>Explore next program <ChevronRight size={17}/></a>
+   <a className="lab-completed-action" href="./programs.html#lab-discover" style={{display:'inline-flex',minHeight:44,alignItems:'center',padding:'10px 14px',background:'#c7f43b',color:'#101710',borderRadius:10,fontWeight:800,textDecoration:'none'}}>Explore next program <ChevronRight size={17}/></a>
   </div>
   <button type="button" onClick={()=>setExpanded(v=>!v)} aria-expanded={expanded} style={{background:'transparent',border:'1px solid #526a58',color:'#f1f5ed',borderRadius:10,padding:'12px 14px',minHeight:44,width:'100%',fontWeight:700}}>{expanded?'Hide completed programs':'View completed programs'+(more?' ('+completed.length+')':'')}</button>
   {expanded&&<div style={{marginTop:12}}>{completed.map(p=><div key={p.id||p.name} style={{padding:'12px 0',borderBottom:'1px solid #415047'}}><strong>{p.name}</strong><p style={{margin:'4px 0'}}>{p.done}/{p.total} sessions · {p.accuracy===null?'No measured accuracy':p.accuracy+'% scored rep success'}</p></div>)}</div>}
