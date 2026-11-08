@@ -19,18 +19,51 @@ function summarizeCloud(programs){
  const done=sessions.length?sessions.filter(x=>x.done||x.completed).length:Math.min(total,Math.max(0,Number(active.completed)||0));
  return {name:active.name||active.title||'Training program',sessions:total,done,next:sessions.find(x=>!x.done&&!x.completed),days:active.frequency||active.days||sessions.length,goal:active.goal||'',totalPlans:list.length};
 }
+
+const memberTabs=[{name:'Home',icon:House,href:'./index.html'},{name:'Train',icon:Target,href:'./practice.html'},{name:'Programs',icon:CalendarDays,href:'./programs.html'},{name:'Progress',icon:ChartNoAxesCombined,href:'./performance.html'},{name:'More',icon:Menu,href:'./account.html'}];
+function MemberHome({user,training,practiceStats}){
+ const [today,setToday]=useState(()=>new Date());
+ const [profile,setProfile]=useState(null);
+ const [rounds,setRounds]=useState([]);
+ useEffect(()=>{
+  if(!supabase||!user)return;
+  let alive=true;
+  Promise.all([supabase.from('golf_profiles').select('*').eq('user_id',user.id).maybeSingle(),supabase.from('golf_rounds').select('score,holes').eq('user_id',user.id).limit(100)]).then(([p,r])=>{if(!alive)return;if(!p.error)setProfile(p.data);if(!r.error)setRounds(r.data||[])}).catch(()=>{});
+  return()=>{alive=false};
+ },[user.id]);
+ const weekday=today.toLocaleDateString(undefined,{weekday:'long'});
+ const date=today.toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'});
+ const name=profile?.display_name||profile?.full_name||user.user_metadata?.full_name||user.email?.split('@')[0]||'Golfer';
+ const handicap=profile?.handicap_index??profile?.handicap??null;
+ const validRounds=rounds.filter(r=>Number.isFinite(Number(r.score))&&Number(r.score)>0);
+ const best=validRounds.length?Math.min(...validRounds.map(r=>Number(r.score))):null;
+ const next=training?.next;
+ const sessionTitle=next?.drill||next?.skill||'Your next practice session';
+ const shift=amount=>setToday(d=>{const n=new Date(d);n.setDate(n.getDate()+amount);return n});
+ return <div className="lab-member-root"><Header/><main className="lab-member-shell">
+ <div className="lab-member-intro"><div><p className="eyebrow">THE LAB / PLAYER DASHBOARD</p><h1>Welcome back, {name}.</h1><p>Your golf performance and training, all in one place.</p></div><a className="lab-member-settings" href="./account.html" aria-label="Account and settings"><Menu size={23}/></a></div>
+ <section className="lab-player-card" aria-label="Player profile"><div className="lab-player-top"><span>THE LAB GOLF</span><span className="lab-player-rating">—<small>LAB RATING</small></span></div><div className="lab-player-identity"><UserRound size={62} strokeWidth={1.2}/><h2>{name}</h2><span>PLAYER PROFILE</span></div><div className="lab-player-metrics"><div><strong>{handicap??'—'}</strong><small>HANDICAP</small></div><div><strong>{best??'—'}</strong><small>BEST SCORE</small></div><div><strong>{practiceStats?.count??'—'}</strong><small>PRACTICES</small></div></div></section>
+ <section className="lab-member-section"><div className="lab-member-section-heading"><h2>Build your Lab Rating</h2><a href="./performance.html">My progress <ChevronRight size={17}/></a></div><p>Complete training and record rounds to build your performance history. A Lab Rating will appear once a scoring system is established.</p><div className="lab-member-steps"><a href="./programs.html"><CheckCircle2 size={19}/> Choose your program <ChevronRight size={17}/></a><a href="./practice.html"><Target size={19}/> Log a practice session <ChevronRight size={17}/></a><a href="./round-tracker.html"><Flag size={19}/> Record a round <ChevronRight size={17}/></a></div></section>
+ <section className="lab-member-section"><div className="lab-member-section-heading"><h2>Daily Training</h2><a href="./programs.html">My Programs <ChevronRight size={17}/></a></div><div className="lab-day-switch"><button type="button" onClick={()=>shift(-1)} aria-label="Previous day">‹</button><div><strong>{weekday.toUpperCase()}</strong><span>{date}</span></div><button type="button" onClick={()=>shift(1)} aria-label="Next day">›</button></div><div className="lab-daily-card"><span>{training?'YOUR ACTIVE PROGRAM':'GET STARTED'}</span><h3>{training?sessionTitle:'Create your first training program'}</h3><p>{training?training.name+' · '+training.done+' of '+training.sessions+' sessions complete':'Set up your training schedule in My Programs to see your next session here.'}</p><a href={training?'./programs.html':'./planner.html'}>{training?'Open training plan':'Build my program'} <ArrowUpRight size={17}/></a></div><p className="lab-day-note">Daily dates are navigable. Exact weekday assignments will appear once program scheduling is connected; we won't invent sessions for a date.</p></section>
+ <section className="lab-member-section"><div className="lab-member-section-heading"><h2>Your Training Tools</h2></div><div className="lab-member-tools"><a href="./academy.html"><BookOpen/>Academy</a><a href="./practice.html"><Target/>Practice</a><a href="./swing-lab.html"><Activity/>Swing Lab</a><a href="./club-locker.html"><Flag/>Club Locker</a></div></section>
+ </main><nav className="lab-member-nav" aria-label="Member navigation">{memberTabs.map((t,i)=><a key={t.name} href={t.href} aria-current={i===0?'page':undefined}><t.icon size={21}/><span>{t.name}</span></a>)}</nav></div>;
+}
+
 function App(){
  const[days,setDays]=useState(3);
+ const[user,setUser]=useState(null);
+ const[authChecked,setAuthChecked]=useState(false);
  const[training,setTraining]=useState(null);
  const[cloudState,setCloudState]=useState(supabase?'loading':'unavailable');
  const[practiceStats,setPracticeStats]=useState(null);
  useEffect(()=>{
-  if(!supabase){setCloudState('unavailable');return;}
+  if(!supabase){setCloudState('unavailable');setAuthChecked(true);return;}
   let mounted=true,sequence=0;
   const refresh=async()=>{
    const seq=++sequence;
    const {data:{user},error:authError}=await supabase.auth.getUser();
    if(!mounted||seq!==sequence)return;
+   setUser(authError?null:user||null);setAuthChecked(true);
    if(authError||!user){setTraining(null);setPracticeStats(null);setCloudState('signed-out');return;}
    const [p,r]=await Promise.all([
     supabase.from('golfer_programs').select('programs').eq('user_id',user.id).maybeSingle(),
@@ -54,6 +87,7 @@ function App(){
   return()=>{mounted=false;sequence++;listener?.subscription?.unsubscribe();window.removeEventListener('focus',onFocus);window.removeEventListener('pageshow',onFocus)};
  },[]);
  const weeklyPlan=training;
+ if(authChecked&&user)return <MemberHome user={user} training={training} practiceStats={practiceStats}/>;
  return <><Header/><main id="home" className="shell lab2-home"><section className="welcome"><div><p className="welcome-kicker"><Sun size={16}/> YOUR GOLF TRAINING HUB</p><h1>Better every <em>round.</em></h1><p className="welcome-sub">Your next breakthrough starts with today's practice.</p></div><div className="welcome-avatar" aria-label="Member profile preview"><UserRound size={24}/></div></section>
 <section className="featured-hero" aria-labelledby="daily-title"><div className="featured-image" role="img" aria-label="Golfer practicing on a green golf course"/><div className="featured-shade"/><div className="featured-content"><span className="feature-tag"><span className="pulse"/> TODAY'S FOCUS</span><p className="feature-overline">PRACTICE WITH PURPOSE</p><h2 id="daily-title">Make your<br/>irons <em>click.</em></h2><p className="feature-description">Build more consistent contact and a confident swing.</p><div className="feature-meta"><span><Clock3 size={15}/> 20 MIN</span><span><Target size={15}/> IRON PLAY</span></div><a className="feature-button" href="./practice.html"><Play size={17} fill="currentColor"/> Start practicing <ArrowUpRight size={18}/></a></div></section>
 <section className="home-stats" aria-label="Platform statistics"><div><span className="stat-symbol"><Target size={17}/></span><strong>262</strong><small>Drills</small></div><div><span className="stat-symbol"><BookOpen size={17}/></span><strong>20</strong><small>Lessons</small></div><div><span className="stat-symbol"><CalendarDays size={17}/></span><strong>21</strong><small>Week goal</small></div></section>
